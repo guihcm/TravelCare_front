@@ -15,14 +15,6 @@ class MyNavBar extends StatelessWidget {
       unselectedItemColor: Colors.white,
       selectedItemColor: Colors.white,
       items: [
-        //Home
-        const BottomNavigationBarItem(
-          icon: Icon(
-            Icons.home,
-            color: Colors.white,
-          ),
-          label: 'Home',
-        ),
         //Viagem
         const BottomNavigationBarItem(
           icon: Icon(
@@ -31,7 +23,7 @@ class MyNavBar extends StatelessWidget {
           ),
           label: 'Viagem',
         ),
-         //Notificação
+        //Notificação
         const BottomNavigationBarItem(
           icon: Icon(
             Icons.notifications,
