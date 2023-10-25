@@ -10,12 +10,6 @@ class ProfilePage extends StatelessWidget {
       body: Center(
         child: Column(children: [
           const Text("Perfil"),
-          ElevatedButton(
-              child: const Text("Cadastro"),
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => CadastroPage()));
-              }),
         ]),
       ),
     );
