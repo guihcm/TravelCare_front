@@ -143,7 +143,7 @@ class _CadastroPageState extends State<CadastroPage> {
                         child: Align(
                             alignment: Alignment.bottomLeft,
                             child: Container(
-                                margin: EdgeInsets.all(30),
+                                margin: const EdgeInsets.all(30),
                                 child: Row(
                                   //mainAxisAlignment: MainAxisAlignment.center,
                                   children: [

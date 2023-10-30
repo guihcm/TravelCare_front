@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 import 'package:travel_care/pages/cadastro.dart';
-import 'package:travel_care/pages/home.dart';
 import 'package:travel_care/pages/login.dart';
 import 'package:travel_care/pages/notification.dart';
 import 'package:travel_care/pages/profile.dart';
 import 'package:travel_care/pages/travel.dart';
 
-void main() {
+void main() async {
+  
+  const keyApplicationId = 'PCI6KioZu7Bn19Z9Ihm04T5cObNRELhDtYsR0EM4';
+  const keyClientKey = '2U9r2HUlPKG3jDxOw0lMyuopIxSG6dys7IZxZU3y';
+  const keyParseServerUrl = 'https://parseapi.back4app.com';
+
+  await Parse().initialize(keyApplicationId, keyParseServerUrl,
+      clientKey: keyClientKey, debug: true);
+
   runApp(const MyApp());
 }
 

@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:travel_care/pages/cadastro.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: Center(
         child: Column(children: [
-          const Text("Perfil"),
+          Text("Perfil"),
         ]),
       ),
     );
