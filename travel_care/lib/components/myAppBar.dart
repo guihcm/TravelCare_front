@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:travel_care/pages/login.dart';
 
 class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -10,12 +11,25 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       centerTitle: true,
       automaticallyImplyLeading: false,
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.blue,
       title: Center(
           child: Text(
         title,
-        style: const TextStyle(color: Colors.blue),
+        style: const TextStyle(color: Colors.white),
       )),
+      actions: [
+        IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginPage()),
+              );
+            },
+            icon: const Icon(
+              Icons.logout,
+              color: Colors.white,
+            ))
+      ],
       elevation: 0,
     );
   }
