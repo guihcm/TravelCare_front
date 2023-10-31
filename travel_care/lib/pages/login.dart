@@ -1,5 +1,8 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
+import 'package:travel_care/components/myDialog.dart';
 import 'package:travel_care/pages/cadastro.dart';
 import 'package:travel_care/pages/password.dart';
 import 'package:travel_care/pages/home.dart';
@@ -20,14 +23,12 @@ class _CadastroPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        //backgroundColor: Colors.black,
-        //appBar: const MyAppBar("TRAVELCARE"),
         body: Center(
             child: SingleChildScrollView(
                 child: Form(
                     key: _formKey,
                     child: Column(children: [
-                      // logo
+
                       SizedBox(
                         height: 200,
                         child: Image.asset('assets/images/logo.png'),
@@ -92,8 +93,6 @@ class _CadastroPageState extends State<LoginPage> {
                         ),
                       ),
 
-                      //const SizedBox(height: 10),
-
                       Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -107,7 +106,7 @@ class _CadastroPageState extends State<LoginPage> {
                                     });
                                   },
                                 )),
-                            //const SizedBox(width: 10),
+
                             Text(
                               'Salvar dados de acesso',
                               style: TextStyle(
@@ -229,34 +228,19 @@ class _CadastroPageState extends State<LoginPage> {
     var response = await user.login();
 
     if (response.success) {
-      // ignore: use_build_context_synchronously
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => const HomePage()));
     } else {
-      showError(response.error!.message == "Invalid username/password."
-          ? "Login ou senha incorretos."
-          : "Algo deu errado. Tente novamente.");
-    }
-  }
+      String message = response.error!.message == "Invalid username/password."
+                    ? "Login ou senha incorretos."
+                    : "Algo deu errado. Tente novamente.";
 
-  void showError(String errorMessage) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("Erro!"),
-          content: Text(errorMessage),
-          actions: <Widget>[
-            TextButton(
-              child: const Text("OK"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return MyDialog(message, () => Navigator.of(context).pop());
+          });
+    }
   }
 
   String? validateField(text) {

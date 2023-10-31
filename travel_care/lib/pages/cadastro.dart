@@ -1,5 +1,9 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
+import 'package:travel_care/components/myDialog.dart';
+import 'package:travel_care/pages/login.dart';
 
 class CadastroPage extends StatefulWidget {
   const CadastroPage({super.key});
@@ -24,7 +28,7 @@ class _CadastroPageState extends State<CadastroPage> {
                   key: _formKey,
                   child: Column(
                     children: [
-                      SizedBox(height: 40),
+                      const SizedBox(height: 40),
                       Container(
                         width: 305,
                         //height: 326,
@@ -164,52 +168,35 @@ class _CadastroPageState extends State<CadastroPage> {
                           ],
                         ),
                       ),
-                      Container(
-                          height: 200,
-                          child: Align(
-                              alignment: Alignment.bottomLeft,
-                              child: Container(
-                                  margin: const EdgeInsets.all(30),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      ElevatedButton(
-                                          onPressed: () =>
-                                              Navigator.of(context).pop(),
-                                          child: const Text('Voltar')),
-                                      const Spacer(),
-                                      ElevatedButton(
-                                          child: const Text('Salvar'),
-                                          onPressed: () {
-                                            if (_formKey.currentState!
-                                                .validate()) {
-                                              salvarUsuario();
 
-                                              showDialog(
-                                                context: context,
-                                                builder:
-                                                    (BuildContext context) {
-                                                  return AlertDialog(
-                                                    //title: const Text("Cadastro de paciente:"),
-                                                    content: const Text(
-                                                        "Cadastro realizado com sucesso!"),
-                                                    actions: <Widget>[
-                                                      Center(
-                                                          child: ElevatedButton(
-                                                        child: const Text("Ok"),
-                                                        onPressed: () {
-                                                          Navigator.of(context)
-                                                              .pop();
-                                                        },
-                                                      ))
-                                                    ],
-                                                  );
-                                                },
-                                              );
-                                            }
-                                          }),
-                                    ],
-                                  )))),
+                      const SizedBox(height: 20),
+
+                      Container(
+                          margin: const EdgeInsets.all(30),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ElevatedButton(
+                                  onPressed: () =>
+                                      Navigator.of(context).pop(),
+                                  child: const Text('Voltar',
+                                  style: TextStyle(
+                                fontSize: 18,
+                              ))),
+                              const Spacer(),
+                              ElevatedButton(
+                                  child: const Text('Salvar',
+                                  style: TextStyle(
+                                fontSize: 18,
+                              )),
+                                  onPressed: () {
+                                    if (_formKey.currentState!
+                                        .validate()) {
+                                      salvarUsuario();
+                                    }
+                                  }),
+                            ],
+                          )),
                     ],
                   ))),
         ));
@@ -223,42 +210,35 @@ class _CadastroPageState extends State<CadastroPage> {
   }
 
   void salvarUsuario() async {
+
     if (!_formKey.currentState!.validate()) {
       return;
     }
 
     final username = controllerUsername.text.trim();
+    final email = controllerEmail.text.trim();
     final password = controllerPassword.text.trim();
 
-    final user = ParseUser(username, password, null);
+    final user = ParseUser.createUser(username, password, email);
 
-    var response = await user.login();
+    var response = await user.signUp();
 
     if (response.success) {
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => const HomePage()));
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return MyDialog(
+              "Cadastro realizado com sucesso!",
+              () => Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const LoginPage())));
+          });
     } else {
-      showError("Algo deu errado. Tente novamente.");
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return MyDialog("Algo deu errado. Tente novamente.",
+                () => Navigator.of(context).pop());
+          });
     }
-  }
-
-  void showError(String errorMessage) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("Erro!"),
-          content: Text(errorMessage),
-          actions: <Widget>[
-            TextButton(
-              child: const Text("OK"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 }
