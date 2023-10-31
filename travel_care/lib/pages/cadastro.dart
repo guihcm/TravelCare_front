@@ -14,9 +14,16 @@ class CadastroPage extends StatefulWidget {
 
 class _CadastroPageState extends State<CadastroPage> {
   final _formKey = GlobalKey<FormState>();
+
+  final controllerNome = TextEditingController();
+  final controllerCPF = TextEditingController();
+  final controllerDataNascimento = TextEditingController();
+  final controllerEndereco = TextEditingController();
   final controllerUsername = TextEditingController();
   final controllerPassword = TextEditingController();
   final controllerEmail = TextEditingController();
+  
+  late DateTime _dataNascimento;
 
   @override
   Widget build(BuildContext context) {
@@ -35,8 +42,8 @@ class _CadastroPageState extends State<CadastroPage> {
                         child: Stack(
                           children: [
                             TextFormField(
-                              controller: null,
-                              //keyboardType: TextInputType.number,
+                              controller: controllerNome,
+                              //keyboardType: TextInputType.datetime,
                               decoration: const InputDecoration(
                                 hintText: 'Digite seu nome completo',
                                 labelText: "Nome Completo",
@@ -55,6 +62,7 @@ class _CadastroPageState extends State<CadastroPage> {
                         child: Stack(
                           children: [
                             TextFormField(
+                              controller: controllerCPF,
                               decoration: const InputDecoration(
                                 hintText: 'Digite seu CPF',
                                 labelText: "CPF",
@@ -71,13 +79,17 @@ class _CadastroPageState extends State<CadastroPage> {
                         child: Stack(
                           children: [
                             TextFormField(
+                              controller: controllerDataNascimento,
+                              keyboardType: TextInputType.datetime,
                               decoration: const InputDecoration(
                                 hintText: 'Digite sua data de nascimento',
                                 labelText: "Data de nascimento",
+                                suffixIcon: Icon(Icons.calendar_month),
                               ),
                               validator: (text) {
                                 return validateEmptyField(text);
                               },
+                              onTap: () => selectDate(),
                             )
                           ],
                         ),
@@ -87,6 +99,7 @@ class _CadastroPageState extends State<CadastroPage> {
                         child: Stack(
                           children: [
                             TextFormField(
+                              controller: controllerEndereco,
                               decoration: const InputDecoration(
                                 hintText:
                                     'Ex: Avenida Aguas Claras, 65, Centro',
@@ -105,6 +118,7 @@ class _CadastroPageState extends State<CadastroPage> {
                           children: [
                             TextFormField(
                               controller: controllerEmail,
+                              keyboardType: TextInputType.emailAddress,
                               decoration: const InputDecoration(
                                 hintText: 'Ex: seuemail@email.com',
                                 labelText: "Email",
@@ -168,30 +182,26 @@ class _CadastroPageState extends State<CadastroPage> {
                           ],
                         ),
                       ),
-
                       const SizedBox(height: 20),
-
                       Container(
                           margin: const EdgeInsets.all(30),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               ElevatedButton(
-                                  onPressed: () =>
-                                      Navigator.of(context).pop(),
+                                  onPressed: () => Navigator.of(context).pop(),
                                   child: const Text('Voltar',
-                                  style: TextStyle(
-                                fontSize: 18,
-                              ))),
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                      ))),
                               const Spacer(),
                               ElevatedButton(
                                   child: const Text('Salvar',
-                                  style: TextStyle(
-                                fontSize: 18,
-                              )),
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                      )),
                                   onPressed: () {
-                                    if (_formKey.currentState!
-                                        .validate()) {
+                                    if (_formKey.currentState!.validate()) {
                                       salvarUsuario();
                                     }
                                   }),
@@ -210,16 +220,24 @@ class _CadastroPageState extends State<CadastroPage> {
   }
 
   void salvarUsuario() async {
-
     if (!_formKey.currentState!.validate()) {
       return;
     }
 
-    final username = controllerUsername.text.trim();
+    final nome = controllerNome.text.trim();
+    final cpf = controllerCPF.text.trim();
+    final dataNascimetnto = DateTime.parse(_dataNascimento.toString());
+    final endereco = controllerEndereco.text.trim();
     final email = controllerEmail.text.trim();
+    final username = controllerUsername.text.trim();
     final password = controllerPassword.text.trim();
 
     final user = ParseUser.createUser(username, password, email);
+
+    user.set<String>("nomeCompleto", nome);
+    user.set<String>("CPF", cpf);
+    user.set<DateTime>("dataNascimento", dataNascimetnto);
+    user.set<String>("endereco", endereco);
 
     var response = await user.signUp();
 
@@ -228,9 +246,11 @@ class _CadastroPageState extends State<CadastroPage> {
           context: context,
           builder: (BuildContext context) {
             return MyDialog(
-              "Cadastro realizado com sucesso!",
-              () => Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const LoginPage())));
+                "Cadastro realizado com sucesso!",
+                () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const LoginPage())));
           });
     } else {
       showDialog(
@@ -239,6 +259,21 @@ class _CadastroPageState extends State<CadastroPage> {
             return MyDialog("Algo deu errado. Tente novamente.",
                 () => Navigator.of(context).pop());
           });
+    }
+  }
+
+  Future selectDate() async {
+    FocusScope.of(context).requestFocus(FocusNode());
+
+    DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(1900),
+        lastDate: DateTime.now());
+    if (picked != null) {
+      _dataNascimento = picked;
+      controllerDataNascimento.text =
+          "${picked.day.toString()}-${picked.month.toString()}-${picked.year.toString()}";
     }
   }
 }
