@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
-import 'package:travel_care/pages/cadastro.dart';
 import 'package:travel_care/pages/login.dart';
 import 'package:travel_care/pages/notification.dart';
 import 'package:travel_care/pages/profile.dart';
 import 'package:travel_care/pages/travel.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,8 +32,9 @@ class MyApp extends StatelessWidget {
         '/notification': (context) => const NotificationPage(),
         '/profile': (context) => const ProfilePage(),
         '/travel': (context) => const TravelPage(),
-        '/cadastro': (context) => const CadastroPage(),
       },
+      localizationsDelegates: GlobalMaterialLocalizations.delegates,
+      supportedLocales: const [Locale('pt', 'BR')],
     );
   }
 }
