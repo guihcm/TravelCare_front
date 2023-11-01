@@ -30,10 +30,10 @@ class _CadastroPageState extends State<CadastroPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(title: const Text("Cadastro de Usuário"),),
         body: SingleChildScrollView(
           child: Padding(
-              padding: const EdgeInsets.all(15.0),
+              padding: const EdgeInsets.all(30.0),
               child: Form(
                   key: _formKey,
                   child: Column(
@@ -108,7 +108,7 @@ class _CadastroPageState extends State<CadastroPage> {
                         keyboardType: TextInputType.emailAddress,
                         decoration: const InputDecoration(
                           hintText: 'Ex: seuemail@email.com',
-                          labelText: "Email",
+                          labelText: "E-mail",
                         ),
                         validator: (text) {
                           return validateEmptyField(text);
@@ -152,28 +152,16 @@ class _CadastroPageState extends State<CadastroPage> {
 
                       const SizedBox(height: 40),
 
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ElevatedButton(
-                              onPressed: () => Navigator.of(context).pop(),
-                              child: const Text('Voltar',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                  ))),
-                          const Spacer(),
-                          ElevatedButton(
-                              child: const Text('Salvar',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                  )),
-                              onPressed: () {
-                                if (_formKey.currentState!.validate()) {
-                                  salvarUsuario();
-                                }
-                              }),
-                        ],
-                      ),
+                      ElevatedButton(
+                          child: const Text('Salvar',
+                              style: TextStyle(
+                                fontSize: 18,
+                              )),
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              salvarUsuario();
+                            }
+                          }),
                     ],
                   ))),
         ));

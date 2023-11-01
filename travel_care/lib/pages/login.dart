@@ -17,7 +17,6 @@ class _CadastroPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final controllerUsername = TextEditingController();
   final controllerPassword = TextEditingController();
-  bool _isChecked = true;
 
   @override
   Widget build(BuildContext context) {
@@ -84,29 +83,8 @@ class _CadastroPageState extends State<LoginPage> {
                               obscureText: true,
                               validator: (text) => validateEmptyField(text),
                             ),
-                
-                            Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                      width: 30,
-                                      child: CheckboxListTile(
-                                        value: _isChecked,
-                                        onChanged: (val) {
-                                          setState(() {
-                                            _isChecked = val!;
-                                          });
-                                        },
-                                      )),
-                
-                                  Text(
-                                    'Salvar dados de acesso',
-                                    style: TextStyle(
-                                      color: Colors.grey[700],
-                                      fontSize: 18,
-                                    ),
-                                  ),
-                                ]),
+
+                            const SizedBox(height: 20),
                 
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -152,7 +130,7 @@ class _CadastroPageState extends State<LoginPage> {
                                 children: [
                                   Expanded(
                                     child: Divider(
-                                      thickness: 0.5,
+                                      thickness: 1,
                                       color: Colors.grey[400],
                                     ),
                                   ),
@@ -166,7 +144,7 @@ class _CadastroPageState extends State<LoginPage> {
                                   ),
                                   Expanded(
                                     child: Divider(
-                                      thickness: 0.5,
+                                      thickness: 1,
                                       color: Colors.grey[400],
                                     ),
                                   ),

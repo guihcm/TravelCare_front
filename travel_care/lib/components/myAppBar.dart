@@ -9,14 +9,12 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      centerTitle: true,
       automaticallyImplyLeading: false,
       backgroundColor: Colors.blue,
-      title: Center(
-          child: Text(
+      title: Text(
         title,
         style: const TextStyle(color: Colors.white),
-      )),
+      ),
       actions: [
         IconButton(
             onPressed: () {
@@ -30,10 +28,10 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
               color: Colors.white,
             ))
       ],
-      elevation: 0,
     );
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(35.0);
+  Size get preferredSize => const Size.fromHeight(50.0);
+
 }

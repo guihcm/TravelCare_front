@@ -9,7 +9,7 @@ class MyDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      content: Text(content),
+      content: Text(content,),
       actions: <Widget>[
         Center(
             child: ElevatedButton(
