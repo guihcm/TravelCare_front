@@ -3,28 +3,28 @@ import 'package:flutter/material.dart';
 class TravelPage extends StatelessWidget {
   TravelPage({super.key});
 
-  List cidades = ["Ceres", "Itapaci", "São Patrício"];
+  List cidades = ["Ceres", "Itapaci", "São Patrício", "Ceres", "Itapaci", "São Patrício"];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(30.0),
-          child: Column(children: [
-            const SizedBox(height: 25),
-            const Center(
-              child: Text(
-                'Minhas Solicitações:',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
+      body: Padding(
+        padding: const EdgeInsets.all(30.0),
+        child: Column(children: [
+          const SizedBox(height: 25),
+          const Center(
+            child: Text(
+              'Minhas Solicitações:',
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 25),
-            ListView.builder(
+          ),
+          const SizedBox(height: 25),
+          Expanded(
+            child: ListView.builder(
               itemCount: cidades.length,
               itemBuilder: (context, index) => Card(
                 shape: RoundedRectangleBorder(
@@ -98,8 +98,8 @@ class TravelPage extends StatelessWidget {
                 ),
               ),
             ),
-          ]),
-        ),
+          ),
+        ]),
       ),
     );
   }
