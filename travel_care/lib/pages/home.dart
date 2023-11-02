@@ -16,7 +16,7 @@ class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
   final List _pages = [
-    const TravelPage(),
+    TravelPage(),
     const NotificationPage(),
     const ProfilePage(),
   ];
