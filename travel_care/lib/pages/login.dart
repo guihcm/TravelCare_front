@@ -203,8 +203,10 @@ class _CadastroPageState extends State<LoginPage> {
     if (!context.mounted) return;
 
     if (response.success) {
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => const HomePage()));
+      Navigator.pushAndRemoveUntil(
+          context, 
+          MaterialPageRoute(builder: (context) => const HomePage()), 
+          (Route<dynamic> route) => false);
     } else {
       String message = response.error!.message == "Invalid username/password."
                     ? "Login ou senha incorretos."

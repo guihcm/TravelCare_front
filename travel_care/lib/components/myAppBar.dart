@@ -64,9 +64,10 @@ class _MyAppBarState extends State<MyAppBar> {
 
     if (response.success) {
       user.deleteLocalUserData();
-      Navigator.push(
+      Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => const LoginPage()),
+        (Route<dynamic> route) => false
       );
     } else {
       showDialog(
