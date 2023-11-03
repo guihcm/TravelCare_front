@@ -16,7 +16,6 @@ class MyAppBar extends StatefulWidget implements PreferredSizeWidget {
 
   Future<ParseUser?> getUser() async {
     currentUser = await ParseUser.currentUser() as ParseUser?;
-    if (currentUser == null) return Future(() => ParseUser.createUser());
     return currentUser;
   }
 }
@@ -59,11 +58,12 @@ class _MyAppBarState extends State<MyAppBar> {
 
   Future<void> logout() async {
     final user = await ParseUser.currentUser() as ParseUser;
-    var response = await user.logout();
+    var response = await user.logout(deleteLocalUserData: false);
 
     if (!context.mounted) return;
 
     if (response.success) {
+      user.deleteLocalUserData();
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const LoginPage()),
