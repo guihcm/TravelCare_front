@@ -16,6 +16,7 @@ class MyAppBar extends StatefulWidget implements PreferredSizeWidget {
 
   Future<ParseUser?> getUser() async {
     currentUser = await ParseUser.currentUser() as ParseUser?;
+    if (currentUser == null) return Future(() => ParseUser.createUser());
     return currentUser;
   }
 }
@@ -40,7 +41,7 @@ class _MyAppBarState extends State<MyAppBar> {
                 automaticallyImplyLeading: false,
                 backgroundColor: Colors.blue,
                 title: Text(
-                  'Olá, ${snapshot.data!.get<String>("nomeCompleto")}!',
+                  'Olá, ${snapshot.data!.get<String>("nomeCompleto", defaultValue: "Prezado Usuário")}!',
                   style: const TextStyle(color: Colors.white),
                 ),
                 actions: [
