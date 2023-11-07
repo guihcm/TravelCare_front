@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 import 'package:travel_care/components/myDialog.dart';
+import 'package:travel_care/models/pessoa.dart';
 import 'package:travel_care/pages/login.dart';
 import 'package:travel_care/helpers/validation_helper.dart';
 import 'package:travel_care/helpers/date_helper.dart';
@@ -172,12 +172,6 @@ class _CadastroPageState extends State<CadastroPage> {
       return;
     }
 
-    final nome = controllerNome.text.trim();
-    final cpf = controllerCPF.text.trim();
-    final rg = controllerRG.text.trim();
-    final endereco = controllerEndereco.text.trim();
-    final email = controllerEmail.text.trim();
-    final username = controllerUsername.text.trim();
     final password = controllerPassword.text.trim();
     final passwordConfirmation = controllerPasswordConfirmation.text.trim();
 
@@ -191,15 +185,18 @@ class _CadastroPageState extends State<CadastroPage> {
       return;
     }
 
-    final user = ParseUser.createUser(username, password, email);
+    final username = controllerUsername.text.trim();
+    final email = controllerEmail.text.trim();
 
-    user.set<String>("nomeCompleto", nome);
-    user.set<String>("CPF", cpf);
-    user.set<String>("RG", rg);
-    user.set<DateTime>("dataNascimento", _dataNascimento);
-    user.set<String>("endereco", endereco);
+    final usuario = Pessoa(username: username, password: password, emailAddress: email);
 
-    var response = await user.signUp();
+    usuario.nomeCompleto = controllerNome.text.trim();
+    usuario.cpf = controllerCPF.text.trim();
+    usuario.rg = controllerRG.text.trim();
+    usuario.dataNascimento = _dataNascimento;
+    usuario.endereco = controllerEndereco.text.trim();
+
+    var response = await usuario.signUp();
 
     if (!context.mounted) return;
 
