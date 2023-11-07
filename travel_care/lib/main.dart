@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
+import 'package:travel_care/pages/home.dart';
 import 'package:travel_care/pages/login.dart';
 import 'package:travel_care/pages/notification.dart';
 import 'package:travel_care/pages/profile.dart';
@@ -27,7 +28,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: const LoginPage(),
+      home: const HomePage(),
       routes: {
         '/notification': (context) => const NotificationPage(),
         '/profile': (context) => const ProfilePage(),

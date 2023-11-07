@@ -1,4 +1,7 @@
+import 'dart:js';
+
 import 'package:flutter/material.dart';
+import 'package:travel_care/pages/home.dart';
 
 class TravelPage extends StatelessWidget {
   TravelPage({super.key});
@@ -9,98 +12,121 @@ class TravelPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.all(30.0),
+        padding: const EdgeInsets.only(left: 20.0),
         child: Column(children: [
-          const SizedBox(height: 25),
-          const Center(
-            child: Text(
-              'Minhas Solicitações:',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+          const SizedBox(height: 30),
+          const Text(
+            'Minhas Solicitações:',
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 25),
           Expanded(
-            child: ListView.builder(
-              itemCount: cidades.length,
-              itemBuilder: (context, index) => Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Padding(
-                  padding: EdgeInsets.all(20.0),
-                  child: Column(
-                    children: <Widget>[
-                      Row(
-                        children: [
-                          Text(
-                            'Destino: ',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+            child: Padding(
+                padding: const EdgeInsets.only(bottom: 30, right: 20),
+              child: ListView.builder(
+                itemCount: cidades.length,
+                itemBuilder: (context, index) => Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Padding(
+                    padding: EdgeInsets.all(20.0),
+                    child: Column(
+                      children: <Widget>[
+                        Row(
+                          children: [
+                            Text(
+                              'Destino: ',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          Text(
-                            'Goiânia',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 18,
+                            Text(
+                              'Goiânia',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 10),
-                      Row(
-                        children: [
-                          Text(
-                            'Data: ',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                          ],
+                        ),
+                        SizedBox(height: 10),
+                        Row(
+                          children: [
+                            Text(
+                              'Data: ',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          Text(
-                            '01/11/2023',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 18,
+                            Text(
+                              '01/11/2023',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 10),
-                      Row(
-                        children: [
-                          Text(
-                            'Situação: ',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                          ],
+                        ),
+                        SizedBox(height: 10),
+                        Row(
+                          children: [
+                            Text(
+                              'Situação: ',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          Text(
-                            'Aceita',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 18,
+                            Text(
+                              'Aceita',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 30, right: 140),
+            child: ElevatedButton(
+                onPressed: () => solicitar(),style: ButtonStyle(
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18.0),
+                    )
+                )
+              ),
+                child: const Text('Solicitar Viagem',
+                    style: TextStyle(
+                      fontSize: 22,
+                    ))
+                    ),
+          ),
         ]),
       ),
     );
   }
+  void solicitar() {
+    Navigator.push(
+      context as BuildContext, MaterialPageRoute(builder: (context) => const HomePage()));
 }
+}
+
+
