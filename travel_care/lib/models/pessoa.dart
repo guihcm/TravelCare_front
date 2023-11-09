@@ -15,6 +15,8 @@ class Pessoa extends ParseUser implements ParseCloneable {
   static const String keyRg = 'RG';
   static const String keyDataNascimento = 'dataNascimento';
   static const String keyEndereco = 'endereco';
+  static const String keyCidade = 'cidadeId';
+
 
   String? get nomeCompleto => get<String>(keyNomeCompleto);
   set nomeCompleto(String? nomeCompleto) => set<String?>(keyNomeCompleto, nomeCompleto);
@@ -30,5 +32,8 @@ class Pessoa extends ParseUser implements ParseCloneable {
 
   String? get endereco => get<String>(keyEndereco);
   set endereco(String? endereco) => set<String?>(keyEndereco, endereco);
+
+  ParseObject? get cidade => get<ParseObject>(keyCidade);
+  set cidade(ParseObject? cidade) => set<ParseObject?>(keyCidade, cidade);
   
 }

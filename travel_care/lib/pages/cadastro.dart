@@ -27,6 +27,9 @@ class _CadastroPageState extends State<CadastroPage> {
 
   late DateTime _dataNascimento;
 
+  static List<String> list = <String>['One', 'Two', 'Three', 'Four'];
+  String dropdownValue = list.first;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -102,6 +105,35 @@ class _CadastroPageState extends State<CadastroPage> {
                           return validateEmptyField(text);
                         },
                       ),
+
+                      //TODO - CONCLUIR DROPDOWN DE CIDADE
+                      DropdownButtonFormField<String>(
+                        value: dropdownValue,
+                        icon: const Icon(Icons.arrow_drop_down),
+                        elevation: 16,
+                        validator: (text) => validateEmptyField(text),
+                        decoration: const InputDecoration(
+                          hintText: 'Digite sua cidade',
+                          labelText: "Cidade",
+                        ),
+                        onChanged: (String? value) {
+                          // This is called when the user selects an item.
+                          setState(() {
+                            dropdownValue = value!;
+                          });
+                        },
+                        items:
+                            list.map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      ),
+
+                      //TODO - TELEFONE
+                      //TODO - SEXO
+                      //TODO - CNS
 
                       TextFormField(
                         controller: controllerEmail,
