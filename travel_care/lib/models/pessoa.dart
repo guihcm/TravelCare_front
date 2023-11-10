@@ -1,4 +1,5 @@
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
+import 'package:travel_care/models/cidade.dart';
 
 class Pessoa extends ParseUser implements ParseCloneable {
 
@@ -33,7 +34,7 @@ class Pessoa extends ParseUser implements ParseCloneable {
   String? get endereco => get<String>(keyEndereco);
   set endereco(String? endereco) => set<String?>(keyEndereco, endereco);
 
-  ParseObject? get cidade => get<ParseObject>(keyCidade);
-  set cidade(ParseObject? cidade) => set<ParseObject?>(keyCidade, cidade);
+  Cidade? get cidade => get<Cidade>(keyCidade);
+  set cidade(Cidade? cidade) => set<Cidade?>(keyCidade, cidade);
   
 }

@@ -1,4 +1,5 @@
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
+import 'package:travel_care/models/estado.dart';
 
 class Cidade extends ParseObject implements ParseCloneable {
   Cidade() : super('cidade');
@@ -14,6 +15,6 @@ class Cidade extends ParseObject implements ParseCloneable {
   String? get nome => get<String>(keyNome);
   set nome(String? nome) => set<String?>(keyNome, nome);
 
-  ParseObject? get estadoId => get<ParseObject>(keyEstadoId);
-  set estadoId(ParseObject? estadoId) => set<ParseObject?>(keyEstadoId, estadoId);
+  Estado? get estadoId => get<Estado>(keyEstadoId);
+  set estadoId(Estado? estadoId) => set<Estado?>(keyEstadoId, estadoId);
 }

@@ -29,184 +29,208 @@ class _CadastroPageState extends State<CadastroPage> {
 
   late DateTime _dataNascimento;
 
-  static List<Cidade>? list =
-      CidadeController().getAllCidades() as List<Cidade>?;
-  late Cidade dropdownValue;
+  late Future<List<Cidade>?> cidadeList;
+  final cidadeController = CidadeController();
+
+  Cidade? _cidade;
+
+  @override
+  void initState() {
+    super.initState();
+    cidadeList = getCidades();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text("Cadastro de Usuário"),
-        ),
-        body: SingleChildScrollView(
-          child: Padding(
-              padding: const EdgeInsets.all(30.0),
-              child: Form(
-                  key: _formKey,
-                  child: Column(
-                    children: [
-                      //const SizedBox(height: 40),
+    return FutureBuilder<List<Cidade>?>(
+        future: cidadeList,
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.none:
+            case ConnectionState.waiting:
+              return const Center(
+                child: SizedBox(
+                    width: 100,
+                    height: 100,
+                    child: CircularProgressIndicator()),
+              );
+            default:
+              return Scaffold(
+                  appBar: AppBar(
+                    title: const Text("Cadastro de Usuário"),
+                  ),
+                  body: SingleChildScrollView(
+                    child: Padding(
+                        padding: const EdgeInsets.all(30.0),
+                        child: Form(
+                            key: _formKey,
+                            child: Column(
+                              children: [
+                                //const SizedBox(height: 40),
 
-                      TextFormField(
-                        controller: controllerNome,
-                        decoration: const InputDecoration(
-                          hintText: 'Digite seu nome completo',
-                          labelText: "Nome Completo",
-                        ),
-                        validator: (text) {
-                          return validateEmptyField(text);
-                        },
-                      ),
+                                TextFormField(
+                                  controller: controllerNome,
+                                  decoration: const InputDecoration(
+                                    hintText: 'Digite seu nome completo',
+                                    labelText: "Nome Completo",
+                                  ),
+                                  validator: (text) {
+                                    return validateEmptyField(text);
+                                  },
+                                ),
 
-                      TextFormField(
-                        controller: controllerCPF,
-                        keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(
-                          hintText: 'Digite seu CPF',
-                          labelText: "CPF",
-                        ),
-                        validator: (text) {
-                          return validateEmptyField(text);
-                        },
-                      ),
+                                TextFormField(
+                                  controller: controllerCPF,
+                                  keyboardType: TextInputType.number,
+                                  decoration: const InputDecoration(
+                                    hintText: 'Digite seu CPF',
+                                    labelText: "CPF",
+                                  ),
+                                  validator: (text) {
+                                    return validateEmptyField(text);
+                                  },
+                                ),
 
-                      TextFormField(
-                        controller: controllerRG,
-                        keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(
-                          hintText: 'Digite seu RG',
-                          labelText: "RG",
-                        ),
-                        validator: (text) {
-                          return validateEmptyField(text);
-                        },
-                      ),
+                                TextFormField(
+                                  controller: controllerRG,
+                                  keyboardType: TextInputType.number,
+                                  decoration: const InputDecoration(
+                                    hintText: 'Digite seu RG',
+                                    labelText: "RG",
+                                  ),
+                                  validator: (text) {
+                                    return validateEmptyField(text);
+                                  },
+                                ),
 
-                      TextFormField(
-                        controller: controllerDataNascimento,
-                        keyboardType: TextInputType.datetime,
-                        decoration: const InputDecoration(
-                          hintText: 'Digite sua data de nascimento',
-                          labelText: "Data de nascimento",
-                          suffixIcon: Icon(Icons.calendar_month),
-                        ),
-                        validator: (text) {
-                          return validateEmptyField(text);
-                        },
-                        onTap: () async {
-                          _dataNascimento = await handleDate(
-                              context, controllerDataNascimento);
-                        },
-                      ),
+                                TextFormField(
+                                  controller: controllerDataNascimento,
+                                  keyboardType: TextInputType.datetime,
+                                  decoration: const InputDecoration(
+                                    hintText: 'Digite sua data de nascimento',
+                                    labelText: "Data de nascimento",
+                                    suffixIcon: Icon(Icons.calendar_month),
+                                  ),
+                                  validator: (text) {
+                                    return validateEmptyField(text);
+                                  },
+                                  onTap: () async {
+                                    _dataNascimento = await handleDate(
+                                        context, controllerDataNascimento);
+                                  },
+                                ),
 
-                      TextFormField(
-                        controller: controllerEndereco,
-                        decoration: const InputDecoration(
-                          hintText: 'Ex: Avenida Aguas Claras, 65, Centro',
-                          labelText: "Endereço",
-                        ),
-                        validator: (text) {
-                          return validateEmptyField(text);
-                        },
-                      ),
+                                TextFormField(
+                                  controller: controllerEndereco,
+                                  decoration: const InputDecoration(
+                                    hintText:
+                                        'Ex: Avenida Aguas Claras, 65, Centro',
+                                    labelText: "Endereço",
+                                  ),
+                                  validator: (text) {
+                                    return validateEmptyField(text);
+                                  },
+                                ),
 
-                      //TODO - CONCLUIR DROPDOWN DE CIDADE
-                      DropdownButtonFormField<Cidade>(
-                        icon: const Icon(Icons.arrow_drop_down),
-                        elevation: 16,
-                        validator: (text) => validateEmptyField(text),
-                        decoration: const InputDecoration(
-                          hintText: 'Digite sua cidade',
-                          labelText: "Cidade",
-                        ),
-                        hint: const Text("Selecione sua cidade"),
-                        onChanged: (Cidade? value) {
-                          setState(() {
-                            dropdownValue = value!;
-                          });
-                        },
-                        items:
-                            list?.map<DropdownMenuItem<Cidade>>((Cidade value) {
-                          return DropdownMenuItem<Cidade>(
-                            value: value,
-                            child: Text(value.nome!),
-                          );
-                        }).toList(),
-                      ),
+                                //TODO - CONCLUIR DROPDOWN DE CIDADE
+                                DropdownButtonFormField<Cidade>(
+                                  icon: const Icon(Icons.arrow_drop_down),
+                                  elevation: 16,
+                                  validator: (cidade) => validateCidade(cidade),
+                                  decoration: const InputDecoration(
+                                    labelText: "Cidade",
+                                  ),
+                                  hint: const Text("Selecione sua cidade"),
+                                  onChanged: (Cidade? value) {
+                                    setState(() {
+                                      _cidade = value!;
+                                    });
+                                  },
+                                  items: snapshot.data!
+                                      .map<DropdownMenuItem<Cidade>>(
+                                          (Cidade value) {
+                                    return DropdownMenuItem<Cidade>(
+                                      value: value,
+                                      child: Text(value.nome!),
+                                    );
+                                  }).toList(),
+                                ),
 
-                      //TODO - TELEFONE
-                      //TODO - SEXO
-                      //TODO - CNS
+                                //TODO - TELEFONE
+                                //TODO - SEXO
+                                //TODO - CNS
 
-                      TextFormField(
-                        controller: controllerEmail,
-                        keyboardType: TextInputType.emailAddress,
-                        decoration: const InputDecoration(
-                          hintText: 'Ex: seuemail@email.com',
-                          labelText: "E-mail",
-                        ),
-                        validator: (text) {
-                          return validateEmptyField(text);
-                        },
-                      ),
+                                TextFormField(
+                                  controller: controllerEmail,
+                                  keyboardType: TextInputType.emailAddress,
+                                  decoration: const InputDecoration(
+                                    hintText: 'Ex: seuemail@email.com',
+                                    labelText: "E-mail",
+                                  ),
+                                  validator: (text) {
+                                    return validateEmptyField(text);
+                                  },
+                                ),
 
-                      TextFormField(
-                        controller: controllerUsername,
-                        decoration: const InputDecoration(
-                          hintText: 'Digite seu login',
-                          labelText: "Login",
-                        ),
-                        validator: (text) {
-                          return validateEmptyField(text);
-                        },
-                      ),
+                                TextFormField(
+                                  controller: controllerUsername,
+                                  decoration: const InputDecoration(
+                                    hintText: 'Digite seu login',
+                                    labelText: "Login",
+                                  ),
+                                  validator: (text) {
+                                    return validateEmptyField(text);
+                                  },
+                                ),
 
-                      TextFormField(
-                        controller: controllerPassword,
-                        obscureText: true,
-                        decoration: const InputDecoration(
-                          hintText: 'Digite sua senha',
-                          labelText: "Senha",
-                        ),
-                        validator: (text) {
-                          return validateEmptyField(text);
-                        },
-                      ),
+                                TextFormField(
+                                  controller: controllerPassword,
+                                  obscureText: true,
+                                  decoration: const InputDecoration(
+                                    hintText: 'Digite sua senha',
+                                    labelText: "Senha",
+                                  ),
+                                  validator: (text) {
+                                    return validateEmptyField(text);
+                                  },
+                                ),
 
-                      TextFormField(
-                        controller: controllerPasswordConfirmation,
-                        obscureText: true,
-                        decoration: const InputDecoration(
-                          hintText: 'Digite sua senha novamente',
-                          labelText: "Confirmar Senha",
-                        ),
-                        validator: (text) {
-                          return validateEmptyField(text);
-                        },
-                      ),
+                                TextFormField(
+                                  controller: controllerPasswordConfirmation,
+                                  obscureText: true,
+                                  decoration: const InputDecoration(
+                                    hintText: 'Digite sua senha novamente',
+                                    labelText: "Confirmar Senha",
+                                  ),
+                                  validator: (text) {
+                                    return validateEmptyField(text);
+                                  },
+                                ),
 
-                      const SizedBox(height: 40),
+                                const SizedBox(height: 40),
 
-                      ElevatedButton(
-                          child: const Text('Salvar',
-                              style: TextStyle(
-                                fontSize: 18,
-                              )),
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              salvarUsuario();
-                            }
-                          }),
-                    ],
-                  ))),
-        ));
+                                ElevatedButton(
+                                    child: const Text('Salvar',
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                        )),
+                                    onPressed: () {
+                                      if (_formKey.currentState!.validate()) {
+                                        salvarUsuario();
+                                      }
+                                    }),
+                              ],
+                            ))),
+                  ));
+          }
+        });
+  }
+
+  Future<List<Cidade>?> getCidades() async {
+    return await cidadeController.getAllCidades();
   }
 
   void salvarUsuario() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
 
     final password = controllerPassword.text.trim();
     final passwordConfirmation = controllerPasswordConfirmation.text.trim();
@@ -232,6 +256,7 @@ class _CadastroPageState extends State<CadastroPage> {
     usuario.rg = controllerRG.text.trim();
     usuario.dataNascimento = _dataNascimento;
     usuario.endereco = controllerEndereco.text.trim();
+    usuario.cidade = _cidade;
 
     var response = await usuario.signUp();
 

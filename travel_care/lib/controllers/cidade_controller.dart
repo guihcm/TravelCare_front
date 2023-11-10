@@ -24,7 +24,7 @@ class CidadeController {
 
     if (response.success && response.results != null) {
       log(response.results.toString());
-      return response.results as List<Cidade>?;
+      return response.results!.map((e) => e as Cidade).toList();
     }
 
     log(response.error!.message);

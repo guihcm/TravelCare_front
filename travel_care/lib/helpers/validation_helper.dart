@@ -5,3 +5,10 @@
     }
     return null;
   }
+
+    String? validateCidade(cidade) {
+    if (cidade == null) {
+      return "* Campo obrigatório";
+    }
+    return null;
+  }
