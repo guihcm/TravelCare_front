@@ -62,13 +62,13 @@ class _MyAppBarState extends State<MyAppBar> {
 
     if (!context.mounted) return;
 
-    if (response.success) {
+    if (response.success ||
+        response.error!.message == "Invalid session token") {
       user.deleteLocalUserData();
       Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => const LoginPage()),
-        (Route<dynamic> route) => false
-      );
+          context,
+          MaterialPageRoute(builder: (context) => const LoginPage()),
+          (Route<dynamic> route) => false);
     } else {
       showDialog(
           context: context,
