@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:travel_care/components/myDialog.dart';
+import 'package:travel_care/controllers/cidade_controller.dart';
+import 'package:travel_care/models/cidade.dart';
 import 'package:travel_care/models/pessoa.dart';
 import 'package:travel_care/pages/login.dart';
 import 'package:travel_care/helpers/validation_helper.dart';
@@ -27,13 +29,16 @@ class _CadastroPageState extends State<CadastroPage> {
 
   late DateTime _dataNascimento;
 
-  static List<String> list = <String>['One', 'Two', 'Three', 'Four'];
-  String dropdownValue = list.first;
+  static List<Cidade>? list =
+      CidadeController().getAllCidades() as List<Cidade>?;
+  late Cidade dropdownValue;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text("Cadastro de Usuário"),),
+        appBar: AppBar(
+          title: const Text("Cadastro de Usuário"),
+        ),
         body: SingleChildScrollView(
           child: Padding(
               padding: const EdgeInsets.all(30.0),
@@ -107,8 +112,7 @@ class _CadastroPageState extends State<CadastroPage> {
                       ),
 
                       //TODO - CONCLUIR DROPDOWN DE CIDADE
-                      DropdownButtonFormField<String>(
-                        value: dropdownValue,
+                      DropdownButtonFormField<Cidade>(
                         icon: const Icon(Icons.arrow_drop_down),
                         elevation: 16,
                         validator: (text) => validateEmptyField(text),
@@ -116,17 +120,17 @@ class _CadastroPageState extends State<CadastroPage> {
                           hintText: 'Digite sua cidade',
                           labelText: "Cidade",
                         ),
-                        onChanged: (String? value) {
-                          // This is called when the user selects an item.
+                        hint: const Text("Selecione sua cidade"),
+                        onChanged: (Cidade? value) {
                           setState(() {
                             dropdownValue = value!;
                           });
                         },
                         items:
-                            list.map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
+                            list?.map<DropdownMenuItem<Cidade>>((Cidade value) {
+                          return DropdownMenuItem<Cidade>(
                             value: value,
-                            child: Text(value),
+                            child: Text(value.nome!),
                           );
                         }).toList(),
                       ),
@@ -220,7 +224,8 @@ class _CadastroPageState extends State<CadastroPage> {
     final username = controllerUsername.text.trim();
     final email = controllerEmail.text.trim();
 
-    final usuario = Pessoa(username: username, password: password, emailAddress: email);
+    final usuario =
+        Pessoa(username: username, password: password, emailAddress: email);
 
     usuario.nomeCompleto = controllerNome.text.trim();
     usuario.cpf = controllerCPF.text.trim();
