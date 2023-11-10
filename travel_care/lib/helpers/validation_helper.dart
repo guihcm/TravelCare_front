@@ -6,7 +6,7 @@
     return null;
   }
 
-    String? validateCidade(cidade) {
+    String? validateNotNull(cidade) {
     if (cidade == null) {
       return "* Campo obrigatório";
     }

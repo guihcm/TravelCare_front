@@ -3,6 +3,7 @@ import 'package:travel_care/components/myDialog.dart';
 import 'package:travel_care/controllers/cidade_controller.dart';
 import 'package:travel_care/models/cidade.dart';
 import 'package:travel_care/models/pessoa.dart';
+import 'package:travel_care/models/sexo.dart';
 import 'package:travel_care/pages/login.dart';
 import 'package:travel_care/helpers/validation_helper.dart';
 import 'package:travel_care/helpers/date_helper.dart';
@@ -20,7 +21,9 @@ class _CadastroPageState extends State<CadastroPage> {
   final controllerNome = TextEditingController();
   final controllerCPF = TextEditingController();
   final controllerRG = TextEditingController();
+  final controllerCNS = TextEditingController();
   final controllerDataNascimento = TextEditingController();
+  final controllerTelefone = TextEditingController();
   final controllerEndereco = TextEditingController();
   final controllerUsername = TextEditingController();
   final controllerPassword = TextEditingController();
@@ -33,6 +36,7 @@ class _CadastroPageState extends State<CadastroPage> {
   final cidadeController = CidadeController();
 
   Cidade? _cidade;
+  Sexo? _sexo;
 
   @override
   void initState() {
@@ -66,8 +70,6 @@ class _CadastroPageState extends State<CadastroPage> {
                             key: _formKey,
                             child: Column(
                               children: [
-                                //const SizedBox(height: 40),
-
                                 TextFormField(
                                   controller: controllerNome,
                                   decoration: const InputDecoration(
@@ -78,7 +80,6 @@ class _CadastroPageState extends State<CadastroPage> {
                                     return validateEmptyField(text);
                                   },
                                 ),
-
                                 TextFormField(
                                   controller: controllerCPF,
                                   keyboardType: TextInputType.number,
@@ -90,7 +91,6 @@ class _CadastroPageState extends State<CadastroPage> {
                                     return validateEmptyField(text);
                                   },
                                 ),
-
                                 TextFormField(
                                   controller: controllerRG,
                                   keyboardType: TextInputType.number,
@@ -102,7 +102,17 @@ class _CadastroPageState extends State<CadastroPage> {
                                     return validateEmptyField(text);
                                   },
                                 ),
-
+                                TextFormField(
+                                  controller: controllerCNS,
+                                  keyboardType: TextInputType.number,
+                                  decoration: const InputDecoration(
+                                    hintText: 'Digite seu CNS',
+                                    labelText: "CNS",
+                                  ),
+                                  validator: (text) {
+                                    return validateEmptyField(text);
+                                  },
+                                ),
                                 TextFormField(
                                   controller: controllerDataNascimento,
                                   keyboardType: TextInputType.datetime,
@@ -119,7 +129,40 @@ class _CadastroPageState extends State<CadastroPage> {
                                         context, controllerDataNascimento);
                                   },
                                 ),
-
+                                TextFormField(
+                                  controller: controllerTelefone,
+                                  keyboardType: TextInputType.number,
+                                  decoration: const InputDecoration(
+                                    hintText: 'Digite seu telefone',
+                                    labelText: "Telefone",
+                                  ),
+                                  validator: (text) {
+                                    return validateEmptyField(text);
+                                  },
+                                ),
+                                DropdownButtonFormField<Sexo>(
+                                  icon: const Icon(Icons.arrow_drop_down),
+                                  elevation: 16,
+                                  //validator: (sexo) => validateNotNull(sexo),
+                                  decoration: const InputDecoration(
+                                    labelText: "Sexo",
+                                  ),
+                                  hint: const Text("Seleciona seu sexo"),
+                                  onChanged: (Sexo? value) {
+                                    setState(() {
+                                      _sexo = value!;
+                                    });
+                                  },
+                                  items: Sexo.values
+                                      .toList()
+                                      .map<DropdownMenuItem<Sexo>>(
+                                          (Sexo value) {
+                                    return DropdownMenuItem<Sexo>(
+                                      value: value,
+                                      child: Text(value.name.toUpperCase()),
+                                    );
+                                  }).toList(),
+                                ),
                                 TextFormField(
                                   controller: controllerEndereco,
                                   decoration: const InputDecoration(
@@ -131,12 +174,11 @@ class _CadastroPageState extends State<CadastroPage> {
                                     return validateEmptyField(text);
                                   },
                                 ),
-
-                                //TODO - CONCLUIR DROPDOWN DE CIDADE
                                 DropdownButtonFormField<Cidade>(
                                   icon: const Icon(Icons.arrow_drop_down),
                                   elevation: 16,
-                                  validator: (cidade) => validateCidade(cidade),
+                                  validator: (cidade) =>
+                                      validateNotNull(cidade),
                                   decoration: const InputDecoration(
                                     labelText: "Cidade",
                                   ),
@@ -155,11 +197,6 @@ class _CadastroPageState extends State<CadastroPage> {
                                     );
                                   }).toList(),
                                 ),
-
-                                //TODO - TELEFONE
-                                //TODO - SEXO
-                                //TODO - CNS
-
                                 TextFormField(
                                   controller: controllerEmail,
                                   keyboardType: TextInputType.emailAddress,
@@ -171,7 +208,6 @@ class _CadastroPageState extends State<CadastroPage> {
                                     return validateEmptyField(text);
                                   },
                                 ),
-
                                 TextFormField(
                                   controller: controllerUsername,
                                   decoration: const InputDecoration(
@@ -182,7 +218,6 @@ class _CadastroPageState extends State<CadastroPage> {
                                     return validateEmptyField(text);
                                   },
                                 ),
-
                                 TextFormField(
                                   controller: controllerPassword,
                                   obscureText: true,
@@ -194,7 +229,6 @@ class _CadastroPageState extends State<CadastroPage> {
                                     return validateEmptyField(text);
                                   },
                                 ),
-
                                 TextFormField(
                                   controller: controllerPasswordConfirmation,
                                   obscureText: true,
@@ -206,9 +240,7 @@ class _CadastroPageState extends State<CadastroPage> {
                                     return validateEmptyField(text);
                                   },
                                 ),
-
                                 const SizedBox(height: 40),
-
                                 ElevatedButton(
                                     child: const Text('Salvar',
                                         style: TextStyle(
@@ -231,7 +263,6 @@ class _CadastroPageState extends State<CadastroPage> {
   }
 
   void salvarUsuario() async {
-
     final password = controllerPassword.text.trim();
     final passwordConfirmation = controllerPasswordConfirmation.text.trim();
 
@@ -248,21 +279,25 @@ class _CadastroPageState extends State<CadastroPage> {
     final username = controllerUsername.text.trim();
     final email = controllerEmail.text.trim();
 
-    final usuario =
+    final pessoa =
         Pessoa(username: username, password: password, emailAddress: email);
 
-    usuario.nomeCompleto = controllerNome.text.trim();
-    usuario.cpf = controllerCPF.text.trim();
-    usuario.rg = controllerRG.text.trim();
-    usuario.dataNascimento = _dataNascimento;
-    usuario.endereco = controllerEndereco.text.trim();
-    usuario.cidade = _cidade;
+    pessoa.nomeCompleto = controllerNome.text.trim();
+    pessoa.cpf = controllerCPF.text.trim();
+    pessoa.rg = controllerRG.text.trim();
+    pessoa.cns = controllerCNS.text.trim();
+    pessoa.dataNascimento = _dataNascimento;
+    pessoa.telefone = controllerTelefone.text.trim();
+    pessoa.endereco = controllerEndereco.text.trim();
+    pessoa.sexo = _sexo;
+    pessoa.cidade = _cidade;
 
-    var response = await usuario.signUp();
+    var response = await pessoa.signUp();
 
     if (!context.mounted) return;
 
     if (response.success) {
+      pessoa.deleteLocalUserData();
       showDialog(
           context: context,
           builder: (BuildContext context) {

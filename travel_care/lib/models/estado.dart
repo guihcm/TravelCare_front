@@ -9,7 +9,7 @@ class Estado extends ParseObject implements ParseCloneable {
   clone(Map<String, dynamic> map) => Estado.clone()..fromJson(map);
 
   static const String keyNome = 'nome';
-  static const String keyUf = 'uf';
+  static const String keyUf = 'UF';
 
   String? get nome => get<String>(keyNome);
   set nome(String? nome) => set<String?>(keyNome, nome);
