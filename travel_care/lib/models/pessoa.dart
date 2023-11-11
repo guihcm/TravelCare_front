@@ -65,12 +65,11 @@ class Pessoa extends ParseUser implements ParseCloneable {
   String? get telefone => get<String>(keyTelefone);
   set telefone(String? telefone) => set<String?>(keyTelefone, telefone);
 
-  Sexo? get situacao {
+  Sexo? get sexo {
     int? sexoIndex = get<int>(keySexo);
     if (sexoIndex == null) return null;
     return Sexo.values[sexoIndex];
   }
-
   set sexo(Sexo? sexo) => set<int?>(keySexo, sexo?.index);
 
   String? get endereco => get<String>(keyEndereco);

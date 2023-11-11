@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:travel_care/helpers/string_helper.dart';
 
 Future<DateTime> handleDate(BuildContext context, TextEditingController controller) async {
   DateTime? picked = await selectDate(context);
@@ -23,10 +24,5 @@ Future<DateTime?> selectDate(
 }
 
 void formatControllerDate(TextEditingController controller) {
-  DateTime date = DateTime.parse(controller.text);
-
-  controller.text =
-      "${date.day.toString().length > 1 ? date.day.toString() : "0${date.day}"}-"
-      "${date.month.toString().length > 1 ? date.month.toString() : "0${date.month}"}-"
-      "${date.year.toString()}";
+  controller.text = formatDateString(controller.text);
 }

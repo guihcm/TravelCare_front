@@ -59,6 +59,7 @@ class _CadastroPageState extends State<CadastroPage> {
                     child: CircularProgressIndicator()),
               );
             default:
+              final cidades = snapshot.data;
               return Scaffold(
                   appBar: AppBar(
                     title: const Text("Cadastro de Usuário"),
@@ -188,7 +189,7 @@ class _CadastroPageState extends State<CadastroPage> {
                                       _cidade = value!;
                                     });
                                   },
-                                  items: snapshot.data!
+                                  items: cidades!
                                       .map<DropdownMenuItem<Cidade>>(
                                           (Cidade value) {
                                     return DropdownMenuItem<Cidade>(
