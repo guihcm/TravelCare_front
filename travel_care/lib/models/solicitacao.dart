@@ -1,13 +1,15 @@
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
+import 'package:travel_care/models/cidade.dart';
+import 'package:travel_care/models/pessoa.dart';
 import 'package:travel_care/models/situacao.dart';
 
 class Solicitacao extends ParseObject {
   Solicitacao() : super('solicitacao');
 
-  Solicitacao.clone() : this();
-
   @override
   clone(Map<String, dynamic> map) => Solicitacao.clone()..fromJson(map);
+
+  Solicitacao.clone() : this();
 
   static const String keyFinalidade = 'finalidade';
   static const String keySituacao = 'situacao';
@@ -16,6 +18,18 @@ class Solicitacao extends ParseObject {
   static const String keyDestinoId = 'destinoId';
   static const String keyPacienteId = 'pacienteId';
   static const String keyAcompanhanteId = 'acompanhanteId';
+
+  factory Solicitacao.fromParseObject(ParseObject object) {
+    return Solicitacao()
+      ..objectId = object.objectId
+      ..finalidade = object[keyFinalidade]
+      ..situacao = Situacao.values[object[keySituacao]]
+      ..dataViagem = object[keyDataViagem]
+      ..horaEvento = object[keyHoraEvento]
+      ..destino = Cidade.fromParseObject(object[keyDestinoId])
+      ..paciente = Pessoa.fromParseUser(object[keyPacienteId])
+      ..acompanhante = Pessoa.fromParseUser(object[keyAcompanhanteId]);
+  }
 
   String? get finalidade => get<String>(keyFinalidade);
   set finalidade(String? finalidade) => set<String?>(keyFinalidade, finalidade);

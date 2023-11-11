@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 import 'package:travel_care/components/myDialog.dart';
+import 'package:travel_care/helpers/string_helper.dart';
+import 'package:travel_care/models/pessoa.dart';
 import 'package:travel_care/pages/login.dart';
 
 class MyAppBar extends StatefulWidget implements PreferredSizeWidget {
-  ParseUser? currentUser;
-
   MyAppBar({super.key});
 
   @override
@@ -13,18 +13,13 @@ class MyAppBar extends StatefulWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize => const Size.fromHeight(50.0);
-
-  Future<ParseUser?> getUser() async {
-    currentUser = await ParseUser.currentUser() as ParseUser?;
-    return currentUser;
-  }
 }
 
 class _MyAppBarState extends State<MyAppBar> {
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<ParseUser?>(
-        future: widget.getUser(),
+    return FutureBuilder<Pessoa?>(
+        future: Pessoa.loggedUser(),
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.none:
@@ -40,7 +35,7 @@ class _MyAppBarState extends State<MyAppBar> {
                 automaticallyImplyLeading: false,
                 backgroundColor: Colors.blue,
                 title: Text(
-                  'Olá, ${snapshot.data!.get<String>("nomeCompleto", defaultValue: "Prezado Usuário")}!',
+                  'Olá, ${getFirstName(snapshot.data!.nomeCompleto)}!',
                   style: const TextStyle(color: Colors.white),
                 ),
                 actions: [
