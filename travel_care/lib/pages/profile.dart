@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:travel_care/components/myDialog.dart';
 import 'package:travel_care/controllers/cidade_controller.dart';
 import 'package:travel_care/helpers/date_helper.dart';
 import 'package:travel_care/helpers/string_helper.dart';
@@ -30,7 +31,7 @@ class _ProfilePageState extends State<ProfilePage> {
   final controllerPasswordConfirmation = TextEditingController();
   final controllerEmail = TextEditingController();
 
-  late DateTime _dataNascimento;
+  DateTime? _dataNascimento;
 
   late Future<ProfileModel> profileModel;
 
@@ -61,7 +62,6 @@ class _ProfilePageState extends State<ProfilePage> {
                     child: CircularProgressIndicator()),
               );
             default:
-
               final pessoa = snapshot.data?.pessoa;
               final cidades = snapshot.data?.cidades;
 
@@ -69,7 +69,8 @@ class _ProfilePageState extends State<ProfilePage> {
               controllerCPF.text = pessoa.cpf ?? "";
               controllerRG.text = pessoa.rg ?? "";
               controllerCNS.text = pessoa.cns ?? "";
-              controllerDataNascimento.text = formatDateString(pessoa.dataNascimento.toString()) ?? "";
+              controllerDataNascimento.text =
+                  formatDateString(pessoa.dataNascimento.toString()) ?? "";
               controllerTelefone.text = pessoa.telefone ?? "";
               controllerEndereco.text = pessoa.endereco ?? "";
               controllerUsername.text = pessoa.username ?? "";
@@ -200,7 +201,11 @@ class _ProfilePageState extends State<ProfilePage> {
                                   _cidade = value!;
                                 });
                               },
-                              value: cidades?.where((element) => element.objectId == pessoa.cidade?.objectId).first,
+                              value: cidades
+                                  ?.where((element) =>
+                                      element.objectId ==
+                                      pessoa.cidade?.objectId)
+                                  .first,
                               items: cidades!.map<DropdownMenuItem<Cidade>>(
                                   (Cidade value) {
                                 return DropdownMenuItem<Cidade>(
@@ -231,7 +236,6 @@ class _ProfilePageState extends State<ProfilePage> {
                                 return validateEmptyField(text);
                               },
                             ),
-                            
                             const SizedBox(height: 40),
                             ElevatedButton(
                                 child: const Text('Salvar',
@@ -257,5 +261,50 @@ class _ProfilePageState extends State<ProfilePage> {
     return ProfileModel(pessoa, cidades);
   }
 
-  void editarUsuario() {}
+  void editarUsuario() async {
+    final pessoa = await Pessoa.loggedUser();
+
+    pessoa!.username = controllerUsername.text.trim();
+    pessoa.emailAddress = controllerEmail.text.trim();
+    pessoa.nomeCompleto = controllerNome.text.trim();
+    pessoa.cpf = controllerCPF.text.trim();
+    pessoa.rg = controllerRG.text.trim();
+    pessoa.cns = controllerCNS.text.trim();
+    pessoa.dataNascimento = _dataNascimento ?? pessoa.dataNascimento;
+    pessoa.telefone = controllerTelefone.text.trim();
+    pessoa.endereco = controllerEndereco.text.trim();
+    pessoa.sexo = _sexo ?? pessoa.sexo;
+    pessoa.cidade = _cidade;
+
+    var response = await pessoa.save();
+
+    if (!context.mounted) return;
+
+    if (response.success) {
+      pessoa.getUpdatedUser();
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return MyDialog(
+                "Dados atualizados com sucesso!", () => Navigator.pop(context));
+          });
+    } else {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return MyDialog(
+                response.error!.message ==
+                        "Account already exists for this username."
+                    ? "O login escolhido já existe."
+                    : (response.error!.message ==
+                            "Email address format is invalid."
+                        ? "Formato inválido de e-mail."
+                        : (response.error!.message ==
+                                "Account already exists for this email address."
+                            ? "O e-mail informado já existe."
+                            : "Algo deu errado. Tente novamente.")),
+                () => Navigator.of(context).pop());
+          });
+    }
+  }
 }
