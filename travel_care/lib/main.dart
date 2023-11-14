@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/notification': (context) => const NotificationPage(),
         '/profile': (context) => const ProfilePage(),
-        '/travel': (context) => TravelPage(),
+        '/travel': (context) => const TravelPage(),
       },
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
       supportedLocales: const [Locale('pt', 'BR')],

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:travel_care/components/myDialog.dart';
 import 'package:travel_care/pages/home.dart';
+import 'package:travel_care/pages/request.dart';
+
 
 class TravelPage extends StatefulWidget {
   const TravelPage({super.key});
@@ -157,83 +159,8 @@ class _TravelPageState extends State<TravelPage> {
   }
 
   info() {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            content: const Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Row(
-                  children: [
-                    Text(
-                      'Paciente: ',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      "Leonardo",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 10),
-                Row(
-                  children: [
-                    Text(
-                      'Acompanhante: ',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      'Não',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 10),
-                Row(
-                  children: [
-                    Text(
-                      'Destino: ',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      'Goiânia',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            actions: <Widget>[
-              Center(
-                  child: ElevatedButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text("Voltar"),
-              ))
-            ],
-          );
-        });
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => const RequestPage()));
   }
 
   void solicitar() {

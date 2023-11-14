@@ -3,6 +3,7 @@ import 'package:travel_care/components/myAppBar.dart';
 import 'package:travel_care/components/myNavBar.dart';
 import 'package:travel_care/pages/notification.dart';
 import 'package:travel_care/pages/profile.dart';
+import 'package:travel_care/pages/request.dart';
 import 'package:travel_care/pages/travel.dart';
 
 class HomePage extends StatefulWidget {
@@ -16,9 +17,10 @@ class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
   final List _pages = [
-    TravelPage(),
+    const TravelPage(),
     const NotificationPage(),
     const ProfilePage(),
+    const RequestPage(),
   ];
 
   void _selectPage(int index) {
