@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
-import 'package:travel_care/components/myDialog.dart';
+import 'package:travel_care/controllers/pessoa_controller.dart';
 import 'package:travel_care/helpers/string_helper.dart';
 import 'package:travel_care/models/pessoa.dart';
-import 'package:travel_care/pages/login.dart';
 
 class MyAppBar extends StatefulWidget implements PreferredSizeWidget {
-  MyAppBar({super.key});
+  const MyAppBar({super.key});
 
   @override
   State<MyAppBar> createState() => _MyAppBarState();
@@ -16,10 +14,11 @@ class MyAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _MyAppBarState extends State<MyAppBar> {
+  final pessoaController = PessoaController();
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Pessoa?>(
-        future: Pessoa.loggedUser(),
+        future: pessoaController.loggedUser(),
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.none:
@@ -40,7 +39,7 @@ class _MyAppBarState extends State<MyAppBar> {
                 ),
                 actions: [
                   IconButton(
-                      onPressed: () => logout(),
+                      onPressed: () => pessoaController.logout(context),
                       icon: const Icon(
                         Icons.logout,
                         color: Colors.white,
@@ -49,28 +48,5 @@ class _MyAppBarState extends State<MyAppBar> {
               );
           }
         });
-  }
-
-  Future<void> logout() async {
-    final user = await ParseUser.currentUser() as ParseUser;
-    var response = await user.logout(deleteLocalUserData: false);
-
-    if (!context.mounted) return;
-
-    if (response.success ||
-        response.error!.message == "Invalid session token") {
-      user.deleteLocalUserData();
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => const LoginPage()),
-          (Route<dynamic> route) => false);
-    } else {
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return MyDialog("Algo deu errado. Tente novamente.",
-                () => Navigator.of(context).pop());
-          });
-    }
   }
 }

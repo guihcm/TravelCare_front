@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:travel_care/components/myDialog.dart';
 import 'package:travel_care/controllers/cidade_controller.dart';
+import 'package:travel_care/controllers/pessoa_controller.dart';
 import 'package:travel_care/helpers/date_helper.dart';
 import 'package:travel_care/helpers/string_helper.dart';
 import 'package:travel_care/helpers/validation_helper.dart';
@@ -36,6 +36,7 @@ class _ProfilePageState extends State<ProfilePage> {
   late Future<ProfileModel> profileModel;
 
   final cidadeController = CidadeController();
+  final pessoaController = PessoaController();
 
   Cidade? _cidade;
 
@@ -71,7 +72,7 @@ class _ProfilePageState extends State<ProfilePage> {
               controllerRG.text = pessoa.rg ?? "";
               controllerCNS.text = pessoa.cns ?? "";
               controllerDataNascimento.text =
-                  formatDateString(pessoa.dataNascimento.toString()) ?? "";
+                  formatDateString(pessoa.dataNascimento.toString());
               controllerTelefone.text = pessoa.telefone ?? "";
               controllerEndereco.text = pessoa.endereco ?? "";
               controllerUsername.text = pessoa.username ?? "";
@@ -241,7 +242,19 @@ class _ProfilePageState extends State<ProfilePage> {
                                     )),
                                 onPressed: () {
                                   if (_formKey.currentState!.validate()) {
-                                    editarUsuario();
+                                    pessoaController.editarUsuario(
+                                        context,
+                                        controllerUsername,
+                                        controllerEmail,
+                                        controllerNome,
+                                        controllerCPF,
+                                        controllerRG,
+                                        controllerCNS,
+                                        _dataNascimento,
+                                        controllerTelefone,
+                                        controllerEndereco,
+                                        _sexo,
+                                        _cidade);
                                   }
                                 }),
                           ],
@@ -253,56 +266,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<ProfileModel> loadProfileModel() async {
     final cidades = await cidadeController.getAllCidades();
-    final pessoa = await Pessoa.loggedUser();
+    final pessoa = await pessoaController.loggedUser();
 
     return ProfileModel(pessoa, cidades);
-  }
-
-  void editarUsuario() async {
-    final pessoa = await Pessoa.loggedUser();
-
-    pessoa!.username = controllerUsername.text.trim();
-    pessoa.emailAddress = controllerEmail.text.trim();
-    pessoa.nomeCompleto = controllerNome.text.trim();
-    pessoa.cpf = controllerCPF.text.trim();
-    pessoa.rg = controllerRG.text.trim();
-    pessoa.cns = controllerCNS.text.trim();
-    pessoa.dataNascimento = _dataNascimento ?? pessoa.dataNascimento;
-    pessoa.telefone = controllerTelefone.text.trim();
-    pessoa.endereco = controllerEndereco.text.trim();
-    pessoa.sexo = _sexo ?? pessoa.sexo;
-    pessoa.cidade = _cidade;
-
-    var response = await pessoa.save();
-
-    if (!context.mounted) return;
-
-    if (response.success) {
-      pessoa.getUpdatedUser();
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return MyDialog(
-                "Dados atualizados com sucesso!", () => Navigator.pop(context));
-          });
-    } else {
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return MyDialog(
-                response.error!.message ==
-                        "Account already exists for this username."
-                    ? "O login escolhido já existe."
-                    : (response.error!.message ==
-                            "Email address format is invalid."
-                        ? "Formato inválido de e-mail."
-                        : (response.error!.message ==
-                                "Account already exists for this email address."
-                            ? "O e-mail informado já existe."
-                            : "Algo deu errado. Tente novamente.")),
-                () => Navigator.of(context).pop());
-          });
-    }
   }
 
   Future<void> setCidade(Future<ProfileModel> model) async {

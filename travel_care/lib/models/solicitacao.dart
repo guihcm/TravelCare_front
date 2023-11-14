@@ -19,16 +19,16 @@ class Solicitacao extends ParseObject {
   static const String keyPacienteId = 'pacienteId';
   static const String keyAcompanhanteId = 'acompanhanteId';
 
-  factory Solicitacao.fromParseObject(ParseObject object) {
+  factory Solicitacao.fromParseObject(ParseObject? object) {
     return Solicitacao()
-      ..objectId = object.objectId
-      ..finalidade = object[keyFinalidade]
-      ..situacao = Situacao.values[object[keySituacao]]
-      ..dataViagem = object[keyDataViagem]
-      ..horaEvento = object[keyHoraEvento]
-      ..destino = Cidade.fromParseObject(object[keyDestinoId])
-      ..paciente = Pessoa.fromParseUser(object[keyPacienteId])
-      ..acompanhante = Pessoa.fromParseUser(object[keyAcompanhanteId]);
+      ..objectId = object?.objectId
+      ..finalidade = object?[keyFinalidade]
+      ..situacao = Situacao.values[object?[keySituacao]]
+      ..dataViagem = object?[keyDataViagem]
+      ..horaEvento = object?[keyHoraEvento]
+      ..destino = Cidade.fromParseObject(object?[keyDestinoId])
+      ..paciente = Pessoa.fromParseUser(object?[keyPacienteId])
+      ..acompanhante = Pessoa.fromParseUser(object?[keyAcompanhanteId]);
   }
 
   String? get finalidade => get<String>(keyFinalidade);
