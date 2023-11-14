@@ -21,7 +21,7 @@ class Pessoa extends ParseUser implements ParseCloneable {
   static const String keyEndereco = 'endereco';
   static const String keyCidade = 'cidadeId';
 
-  static Future<Pessoa?> loggedUser() async {
+  static Future<Pessoa?> loggedUser () async {
     final user = await ParseUser.currentUser() as ParseUser?;
     if (user != null) {
       return Pessoa.fromParseUser(user);
@@ -29,20 +29,20 @@ class Pessoa extends ParseUser implements ParseCloneable {
     return null;
   }
 
-  factory Pessoa.fromParseUser(ParseUser user) {
+  factory Pessoa.fromParseUser(ParseUser? user) {
     return Pessoa()
-      ..objectId = user.objectId
-      ..username = user.username
-      ..emailAddress = user.emailAddress
-      ..nomeCompleto = user[keyNomeCompleto]
-      ..cpf = user[keyCpf]
-      ..rg = user[keyRg]
-      ..cns = user[keyCns]
-      ..dataNascimento = user[keyDataNascimento]
-      ..telefone = user[keyTelefone]
-      ..sexo = Sexo.values[user[keySexo]]
-      ..endereco = user[keyEndereco]
-      ..cidade = Cidade.fromParseObject(user[keyCidade]);
+      ..objectId = user?.objectId
+      ..username = user?.username
+      ..emailAddress = user?.emailAddress
+      ..nomeCompleto = user?[keyNomeCompleto]
+      ..cpf = user?[keyCpf]
+      ..rg = user?[keyRg]
+      ..cns = user?[keyCns]
+      ..dataNascimento = user?[keyDataNascimento]
+      ..telefone = user?[keyTelefone]
+      ..sexo = Sexo.values[user?[keySexo]]
+      ..endereco = user?[keyEndereco]
+      ..cidade = Cidade.fromParseObject(user?[keyCidade]);
   }
 
   String? get nomeCompleto => get<String>(keyNomeCompleto);

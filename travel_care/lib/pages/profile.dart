@@ -45,6 +45,7 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     super.initState();
     profileModel = loadProfileModel();
+    setCidade(profileModel);
   }
 
   @override
@@ -201,11 +202,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   _cidade = value!;
                                 });
                               },
-                              value: cidades
-                                  ?.where((element) =>
-                                      element.objectId ==
-                                      pessoa.cidade?.objectId)
-                                  .first,
+                              value: _cidade,
                               items: cidades!.map<DropdownMenuItem<Cidade>>(
                                   (Cidade value) {
                                 return DropdownMenuItem<Cidade>(
@@ -306,5 +303,17 @@ class _ProfilePageState extends State<ProfilePage> {
                 () => Navigator.of(context).pop());
           });
     }
+  }
+
+  Future<void> setCidade(Future<ProfileModel> model) async {
+    ProfileModel profileModel = await model;
+
+    Pessoa? pessoa = profileModel.pessoa;
+    List<Cidade>? cidades = profileModel.cidades;
+
+    _cidade = pessoa?.cidade?.objectId != null
+        ? cidades?.firstWhere(
+            (element) => element.objectId == pessoa?.cidade?.objectId)
+        : null;
   }
 }

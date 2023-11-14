@@ -12,11 +12,11 @@ class Cidade extends ParseObject implements ParseCloneable {
   static const String keyNome = 'nome';
   static const String keyEstadoId = 'estadoId';
 
-  factory Cidade.fromParseObject(ParseObject object) {
+  factory Cidade.fromParseObject(ParseObject? object) {
     return Cidade()
-      ..objectId = object.objectId
-      ..nome = object[keyNome]
-      ..estadoId = object[keyEstadoId];
+      ..objectId = object?.objectId
+      ..nome = object?[keyNome]
+      ..estadoId = object?[keyEstadoId];
   }
 
   String? get nome => get<String>(keyNome);

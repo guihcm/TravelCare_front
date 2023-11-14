@@ -35,7 +35,7 @@ class _MyAppBarState extends State<MyAppBar> {
                 automaticallyImplyLeading: false,
                 backgroundColor: Colors.blue,
                 title: Text(
-                  'Olá, ${getFirstName(snapshot.data!.nomeCompleto)}!',
+                  'Olá, ${getFirstName(snapshot.data?.nomeCompleto) ?? "Prezado Usário"}!',
                   style: const TextStyle(color: Colors.white),
                 ),
                 actions: [
