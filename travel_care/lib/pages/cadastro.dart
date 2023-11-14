@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:travel_care/components/myDialog.dart';
 import 'package:travel_care/controllers/cidade_controller.dart';
+import 'package:travel_care/controllers/pessoa_controller.dart';
 import 'package:travel_care/models/cidade.dart';
-import 'package:travel_care/models/pessoa.dart';
 import 'package:travel_care/models/sexo.dart';
-import 'package:travel_care/pages/login.dart';
 import 'package:travel_care/helpers/validation_helper.dart';
 import 'package:travel_care/helpers/date_helper.dart';
 
@@ -33,10 +31,13 @@ class _CadastroPageState extends State<CadastroPage> {
   late DateTime _dataNascimento;
 
   late Future<List<Cidade>?> cidadeList;
+
   final cidadeController = CidadeController();
+  final pessoaController = PessoaController();
 
   Cidade? _cidade;
   Sexo? _sexo;
+  
 
   @override
   void initState() {
@@ -249,7 +250,21 @@ class _CadastroPageState extends State<CadastroPage> {
                                         )),
                                     onPressed: () {
                                       if (_formKey.currentState!.validate()) {
-                                        salvarUsuario();
+                                        pessoaController.salvarUsuario(
+                                            context,
+                                            controllerPassword,
+                                            controllerPasswordConfirmation,
+                                            controllerUsername,
+                                            controllerEmail,
+                                            controllerNome,
+                                            controllerCPF,
+                                            controllerRG,
+                                            controllerCNS,
+                                            _dataNascimento,
+                                            controllerTelefone,
+                                            controllerEndereco,
+                                            _sexo,
+                                            _cidade);
                                       }
                                     }),
                               ],
@@ -263,69 +278,5 @@ class _CadastroPageState extends State<CadastroPage> {
     return await cidadeController.getAllCidades();
   }
 
-  void salvarUsuario() async {
-    final password = controllerPassword.text.trim();
-    final passwordConfirmation = controllerPasswordConfirmation.text.trim();
-
-    if (password != passwordConfirmation) {
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return MyDialog(
-                "Senhas diferentes.", () => Navigator.of(context).pop());
-          });
-      return;
-    }
-
-    final username = controllerUsername.text.trim();
-    final email = controllerEmail.text.trim();
-
-    final pessoa =
-        Pessoa(username: username, password: password, emailAddress: email);
-
-    pessoa.nomeCompleto = controllerNome.text.trim();
-    pessoa.cpf = controllerCPF.text.trim();
-    pessoa.rg = controllerRG.text.trim();
-    pessoa.cns = controllerCNS.text.trim();
-    pessoa.dataNascimento = _dataNascimento;
-    pessoa.telefone = controllerTelefone.text.trim();
-    pessoa.endereco = controllerEndereco.text.trim();
-    pessoa.sexo = _sexo;
-    pessoa.cidade = _cidade;
-
-    var response = await pessoa.signUp();
-
-    if (!context.mounted) return;
-
-    if (response.success) {
-      pessoa.deleteLocalUserData();
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return MyDialog(
-                "Cadastro realizado com sucesso!",
-                () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const LoginPage())));
-          });
-    } else {
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return MyDialog(
-                response.error!.message ==
-                        "Account already exists for this username."
-                    ? "O login escolhido já existe."
-                    : (response.error!.message ==
-                            "Email address format is invalid."
-                        ? "Formato inválido de e-mail."
-                        : (response.error!.message ==
-                                "Account already exists for this email address."
-                            ? "O e-mail informado já existe."
-                            : "Algo deu errado. Tente novamente.")),
-                () => Navigator.of(context).pop());
-          });
-    }
-  }
+  
 }

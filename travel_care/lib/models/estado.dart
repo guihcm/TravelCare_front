@@ -11,11 +11,11 @@ class Estado extends ParseObject implements ParseCloneable {
   static const String keyNome = 'nome';
   static const String keyUf = 'UF';
 
-    factory Estado.fromParseObject(ParseObject object) {
+    factory Estado.fromParseObject(ParseObject? object) {
     return Estado()
-      ..objectId = object.objectId
-      ..nome = object[keyNome]
-      ..uf = object[keyUf];
+      ..objectId = object?.objectId
+      ..nome = object?[keyNome]
+      ..uf = object?[keyUf];
   }
 
   String? get nome => get<String>(keyNome);

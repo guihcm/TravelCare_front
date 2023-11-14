@@ -21,14 +21,6 @@ class Pessoa extends ParseUser implements ParseCloneable {
   static const String keyEndereco = 'endereco';
   static const String keyCidade = 'cidadeId';
 
-  static Future<Pessoa?> loggedUser () async {
-    final user = await ParseUser.currentUser() as ParseUser?;
-    if (user != null) {
-      return Pessoa.fromParseUser(user);
-    }
-    return null;
-  }
-
   factory Pessoa.fromParseUser(ParseUser? user) {
     return Pessoa()
       ..objectId = user?.objectId
