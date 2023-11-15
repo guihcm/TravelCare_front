@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:flutter/material.dart';
 import 'package:travel_care/components/myAppBar.dart';
 import 'package:travel_care/components/myNavBar.dart';
