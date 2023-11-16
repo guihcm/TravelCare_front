@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:travel_care/controllers/solicitacao_controller.dart';
 import 'package:travel_care/helpers/string_helper.dart';
+import 'package:travel_care/models/situacao.dart';
 import 'package:travel_care/models/solicitacao.dart';
 import 'package:travel_care/pages/request.dart';
 
@@ -82,7 +83,7 @@ class _TravelPageState extends State<TravelPage> {
                                                   ),
                                                 ),
                                                 Text(
-                                                  solicitacoes![index]
+                                                  solicitacoes[index]
                                                           .destino
                                                           ?.nome ??
                                                       "",
@@ -106,7 +107,7 @@ class _TravelPageState extends State<TravelPage> {
                                                 ),
                                                 Text(
                                                   formatDateString(
-                                                          solicitacoes![index]
+                                                          solicitacoes[index]
                                                               .dataViagem
                                                               .toString()) ??
                                                       "",
@@ -147,7 +148,9 @@ class _TravelPageState extends State<TravelPage> {
                                             Row(
                                               children: [
                                                 TextButton(
-                                                  onPressed: () => info(),
+                                                  onPressed: () => info(
+                                                      solicitacoes[index]
+                                                          .objectId),
                                                   child: const Icon(
                                                     Icons.more_horiz,
                                                     color: Colors.blue,
@@ -165,15 +168,16 @@ class _TravelPageState extends State<TravelPage> {
                                 ),
                               )
                             : SizedBox(
-                              height: 25,
-                              child: Text(
+                                height: 25,
+                                child: Text(
                                   "Você ainda não realizou uma solicitação de viagem.",
                                   style: TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.blue[300],
-                                  ),),
-                            ),
+                                  ),
+                                ),
+                              ),
                       ),
                     ),
                     Row(
@@ -203,182 +207,213 @@ class _TravelPageState extends State<TravelPage> {
         });
   }
 
-  info() {
+  info(solicitacaoId) {
+    late Future<Solicitacao?> solicitacaoInit;
+
+    final solicitaController = SolicitacaoController();
+
+    Future<Solicitacao?> getSolicita(solicitacaoId) async {
+      return await solicitaController.getSolicitacao(solicitacaoId);
+    }
+
+    setState(() {
+      solicitacaoInit = getSolicita(solicitacaoId);
+    });
+
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return FutureBuilder(
-            future: Future.delayed(const Duration(seconds: 1)),
-            builder: (context, snapshot){
-            switch (snapshot.connectionState) {
-            case ConnectionState.none:
-            case ConnectionState.waiting:
-              return const Center(
-                child: SizedBox(
-                    width: 100,
-                    height: 100,
-                    child: CircularProgressIndicator()),
-              );
-              default:
-              return AlertDialog(
-              content: Column(
-                children: <Widget>[
-                  const Row(
-                    children: [
-                      Text(
-                        'Paciente: ',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+          return FutureBuilder<Solicitacao?>(
+            future: solicitacaoInit,
+            builder: (context, snapshot) {
+              switch (snapshot.connectionState) {
+                case ConnectionState.none:
+                case ConnectionState.waiting:
+                  return const Center(
+                    child: SizedBox(
+                        width: 100,
+                        height: 100,
+                        child: CircularProgressIndicator()),
+                  );
+                default:
+                  final solicitacao = snapshot.data;
+                  return AlertDialog(
+                    content: Column(
+                      children: <Widget>[
+                        Row(
+                          children: [
+                            const Text(
+                              'Paciente: ',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              solicitacao?.paciente?.nomeCompleto ?? "",
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                      Text(
-                        "Leonardo",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 18,
+                        const SizedBox(height: 10),
+                        Row(
+                          children: [
+                            const Text(
+                              'Acompanhante: ',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              solicitacao?.acompanhante?.nomeCompleto ?? "Não",
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  const Row(
-                    children: [
-                      Text(
-                        'Acompanhante: ',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                        const SizedBox(height: 10),
+                        Row(
+                          children: [
+                            const Text(
+                              'Destino: ',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              solicitacao?.destino?.nome ?? "",
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                      Text(
-                        'Não',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 18,
+                        const SizedBox(height: 10),
+                        Row(
+                          children: [
+                            const Text(
+                              'Data: ',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              formatDateString(
+                                      solicitacao!.dataViagem.toString()) ??
+                                  "",
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  const Row(
-                    children: [
-                      Text(
-                        'Destino: ',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                        const SizedBox(height: 10),
+                        Row(
+                          children: [
+                            const Text(
+                              'Finalidade: ',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              solicitacao.finalidade ?? "",
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                      Text(
-                        'Goiânia',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 18,
+                        const SizedBox(height: 10),
+                        Row(
+                          children: [
+                            const Text(
+                              'Horário de Chegada: ',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              formatHourString(
+                                  solicitacao.horaEvento.toString()),
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  const Row(
-                    children: [
-                      Text(
-                        'Data: ',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                        const SizedBox(height: 25),
+                        const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Situação: ',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                      Text(
-                        '19/10/2023',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 18,
+                        switch (solicitacao.situacao!) {
+                          Situacao.aceita => ClipRRect(
+                          child: Image.asset(
+                            'assets/images/aprovada.png',
+                            height: 200,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  const Row(
-                    children: [
-                      Text(
-                        'Finalidade: ',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                          Situacao.pendente => ClipRRect(
+                          child: Image.asset(
+                            'assets/images/analise.png',
+                            height: 200,
+                          ),
                         ),
-                      ),
-                      Text(
-                        'Consulta',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 18,
+
+                          Situacao.recusada => ClipRRect(
+                          child: Image.asset(
+                            'assets/images/recusada.png',
+                            height: 200,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  const Row(
-                    children: [
-                      Text(
-                        'Horário de Chegada: ',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        '14h',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 18,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 25),
-                  const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Situação: ',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 25),
-                  ClipRRect(
-                    child: Image.asset(
-                      'assets/images/aceita.png',
-                      height: 200,
+                        },
+                        const SizedBox(height: 25),
+                        Center(
+                            child: ElevatedButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: const Text(
+                            "Voltar",
+                            style: TextStyle(
+                              fontSize: 20,
+                            ),
+                          ),
+                        ))
+                      ],
                     ),
-                  ),
-                  const SizedBox(height: 25),
-                  Center(
-                      child: ElevatedButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: const Text(
-                      "Voltar",
-                      style: TextStyle(
-                        fontSize: 20,
-                      ),
-                    ),
-                  ))
-                ],
-              ),
-            );
-              }}            
+                  );
+              }
+            },
           );
         });
   }

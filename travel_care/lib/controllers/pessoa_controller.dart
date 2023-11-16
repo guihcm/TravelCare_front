@@ -250,4 +250,18 @@ class PessoaController {
           });
     }
   }
+
+  Future<Pessoa?> getPessoa(String? pessoaId) async{
+    if(pessoaId == null) return null;
+
+    final queryBuilder = QueryBuilder<Pessoa>(Pessoa())
+      ..whereEqualTo('objectId', pessoaId);
+
+    final response = await queryBuilder.query();
+
+    if (response.success && response.results != null) {
+      return response.results!.first as Pessoa?;
+    }
+    return null;
+  }
 }

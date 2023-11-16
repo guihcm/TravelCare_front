@@ -11,3 +11,9 @@ String formatDateString(String dateString) {
       "${date.month.toString().length > 1 ? date.month.toString() : "0${date.month}"}/"
       "${date.year.toString()}";
 }
+
+  String formatHourString(String hourString) {
+  final date = DateTime.parse(hourString);
+  return "${date.hour.toString().length > 1 ? date.hour.toString() : "0${date.hour}"}:"
+      "${date.minute.toString().length > 1 ? date.minute.toString() : "0${date.minute}"}";
+}

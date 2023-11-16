@@ -53,11 +53,11 @@ class Solicitacao extends ParseObject {
   set destino(Cidade? destinoId) =>
       set<Cidade?>(keyDestinoId, destinoId);
 
-  ParseObject? get paciente => get<ParseObject>(keyPacienteId);
-  set paciente(ParseObject? pacienteId) =>
-      set<ParseObject?>(keyPacienteId, pacienteId);
+  Pessoa? get paciente => get<Pessoa>(keyPacienteId);
+  set paciente(Pessoa? pacienteId) =>
+      set<Pessoa?>(keyPacienteId, pacienteId);
 
-  ParseObject? get acompanhante => get<ParseObject>(keyAcompanhanteId);
-  set acompanhante(ParseObject? acompanhanteId) =>
-      set<ParseObject?>(keyAcompanhanteId, acompanhanteId);
+  Pessoa? get acompanhante => get<Pessoa>(keyAcompanhanteId);
+  set acompanhante(Pessoa? acompanhanteId) =>
+      set<Pessoa?>(keyAcompanhanteId, acompanhanteId);
 }

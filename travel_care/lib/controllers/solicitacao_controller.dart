@@ -1,8 +1,10 @@
 import 'dart:developer';
+import 'package:flutter/material.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 import 'package:travel_care/controllers/cidade_controller.dart';
 import 'package:travel_care/controllers/pessoa_controller.dart';
 import 'package:travel_care/models/cidade.dart';
+import 'package:travel_care/models/pessoa.dart';
 import 'package:travel_care/models/solicitacao.dart';
 
 class SolicitacaoController {
@@ -15,9 +17,20 @@ class SolicitacaoController {
       ..whereEqualTo('objectId', solicitacaoId);
 
     final response = await queryBuilder.query();
-
+    
     if (response.success && response.results != null) {
-      return response.results!.first as Solicitacao?;
+      var solicitacao = response.results!.first as Solicitacao?;
+      
+      Cidade? cidade = await cidadeController.getCidade(solicitacao?["destinoId"]?["objectId"]);
+      solicitacao?.destino = cidade;
+      
+      Pessoa? paciente = await pessoaController.getPessoa(solicitacao?["pacienteId"]?["objectId"]);
+      solicitacao?.paciente = paciente;
+      
+      Pessoa? acompanhante = await pessoaController.getPessoa(solicitacao?["acompanhanteId"]?["objectId"]);
+      solicitacao?.acompanhante = acompanhante ?? solicitacao.acompanhante;
+
+      return solicitacao;
     }
 
     log(response.error!.message);
