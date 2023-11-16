@@ -49,9 +49,9 @@ class Solicitacao extends ParseObject {
   set horaEvento(DateTime? horaEvento) =>
       set<DateTime?>(keyHoraEvento, horaEvento);
 
-  ParseObject? get destino => get<ParseObject>(keyDestinoId);
-  set destino(ParseObject? destinoId) =>
-      set<ParseObject?>(keyDestinoId, destinoId);
+  Cidade? get destino => get<Cidade>(keyDestinoId);
+  set destino(Cidade? destinoId) =>
+      set<Cidade?>(keyDestinoId, destinoId);
 
   ParseObject? get paciente => get<ParseObject>(keyPacienteId);
   set paciente(ParseObject? pacienteId) =>
