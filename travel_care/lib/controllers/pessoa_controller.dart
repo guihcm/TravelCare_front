@@ -264,4 +264,32 @@ class PessoaController {
     }
     return null;
   }
+
+    Future<Pessoa?> getAcompanhante(String? pessoaCpf) async{
+    if(pessoaCpf == null) return null;
+
+    final queryBuilder = QueryBuilder<Pessoa>(Pessoa())
+      ..whereEqualTo('CPF', pessoaCpf);
+
+    final response = await queryBuilder.query();
+
+    if (response.success && response.results != null) {
+      return response.results!.first as Pessoa?;
+    }
+    return null;
+  }
+
+    getAcompanhant(String? pessoaCpf) async{
+    if(pessoaCpf == null) return null;
+
+    final queryBuilder = QueryBuilder<Pessoa>(Pessoa())
+      ..whereEqualTo('CPF', pessoaCpf);
+
+    final response = await queryBuilder.query();
+
+    if (response.success && response.results != null) {
+      return response.results!.first as Pessoa?;
+    }
+    return null;
+  }
 }
