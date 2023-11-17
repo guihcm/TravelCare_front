@@ -28,6 +28,6 @@ class CidadeController {
     }
 
     log(response.error!.message);
-    return null;
+    return List<Cidade>.empty();
   }
 }

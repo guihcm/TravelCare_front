@@ -53,8 +53,9 @@ class _NotificationPageState extends State<NotificationPage> {
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.only(bottom: 20),
-                        child: ListView.builder(
-                            itemCount: notificacoes?.length,
+                        child: notificacoes!.isNotEmpty 
+                        ? ListView.builder(
+                            itemCount: notificacoes.length,
                             itemBuilder: (context, index) => Padding(
                                   padding: const EdgeInsets.only(bottom: 2),
                                   child: ListTile(
@@ -63,19 +64,19 @@ class _NotificationPageState extends State<NotificationPage> {
                                       ),
                                       leading: CircleAvatar(
                                         backgroundColor: Colors.white10,
-                                        child: notificacoes![index].visto!
+                                        child: notificacoes[index].visto!
                                             ? const Icon(
                                                 Icons.notifications_none)
                                             : const Icon(
                                                 Icons.notifications_active),
                                       ),
-                                      tileColor: notificacoes![index].visto!
+                                      tileColor: notificacoes[index].visto!
                                           ? Colors.white
                                           : Colors.grey[200],
-                                      title: notificacoes![index].visto!
-                                          ? Text(notificacoes![index].texto!)
+                                      title: notificacoes[index].visto!
+                                          ? Text(notificacoes[index].texto!)
                                           : Text(
-                                              notificacoes![index].texto!,
+                                              notificacoes[index].texto!,
                                               style: const TextStyle(
                                                 fontWeight: FontWeight.bold,
                                               ),
@@ -112,7 +113,21 @@ class _NotificationPageState extends State<NotificationPage> {
                                                       .solicitacao!.objectId!));
                                     },
                                   ),
-                                )),
+                                ),
+                                )
+                        : Center(
+                          child: SizedBox(
+                                  height: 25,
+                                  child: Text(
+                                    "Você ainda não tem notificações.",
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.blue[300],
+                                    ),
+                                  ),
+                                ),
+                        ),
                       ),
                     ),
                   ]),
