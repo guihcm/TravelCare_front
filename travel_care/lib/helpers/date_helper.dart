@@ -26,3 +26,15 @@ Future<DateTime?> selectDate(
 void formatControllerDate(TextEditingController controller) {
   controller.text = formatDateString(controller.text);
 }
+
+Future<void> selectTime(
+    BuildContext context, TextEditingController timeController) async {
+  TimeOfDay? picked = await showTimePicker(
+    context: context,
+    initialTime: TimeOfDay.now(),
+  );
+
+  if (picked != null) {
+    timeController.text = picked.format(context);
+  }
+}
