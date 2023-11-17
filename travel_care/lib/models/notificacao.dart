@@ -21,9 +21,9 @@ class Notificacao extends ParseObject implements ParseCloneable {
   bool? get visto => get<bool>(keyVisto);
   set visto(bool? visto) => set<bool?>(keyVisto, visto);
 
-  Solicitacao? get solicitacaoId => get<Solicitacao>(keySolicitacaoId);
-  set solicitacaoId(Solicitacao? solicitacaoId) => set<Solicitacao?>(keySolicitacaoId, solicitacaoId);
+  Solicitacao? get solicitacao => get<Solicitacao>(keySolicitacaoId);
+  set solicitacao(Solicitacao? solicitacaoId) => set<Solicitacao?>(keySolicitacaoId, solicitacaoId);
 
-  Pessoa? get pacienteId => get<Pessoa>(keyPacienteId);
-  set pacienteId(Pessoa? pacienteId) => set<Pessoa?>(keyPacienteId, pacienteId);
+  Pessoa? get paciente => get<Pessoa>(keyPacienteId);
+  set paciente(Pessoa? pacienteId) => set<Pessoa?>(keyPacienteId, pacienteId);
 }
