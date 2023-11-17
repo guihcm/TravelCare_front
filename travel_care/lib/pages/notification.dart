@@ -117,9 +117,11 @@ class _NotificationPageState extends State<NotificationPage> {
   }
 
   void marcarComoVisto(Notificacao notificacao) {
+    if (!notificacao.visto!) {
       setState(() {
         notificacao.visto = true;
         notificacaoController.editarNotificacao(notificacao);
       });
+    }
   }
 }

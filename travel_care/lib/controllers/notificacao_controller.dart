@@ -24,8 +24,6 @@ class NotificacaoController {
   }
 
   Future<void> editarNotificacao(Notificacao notificacao) async {
-    if (!notificacao.visto!) {
       notificacao.save();
-    }
   }
 }
