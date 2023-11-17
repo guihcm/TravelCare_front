@@ -1,4 +1,6 @@
+import 'package:brasil_fields/brasil_fields.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:travel_care/controllers/cidade_controller.dart';
 import 'package:travel_care/controllers/pessoa_controller.dart';
 import 'package:travel_care/models/cidade.dart';
@@ -37,7 +39,6 @@ class _CadastroPageState extends State<CadastroPage> {
 
   Cidade? _cidade;
   Sexo? _sexo;
-  
 
   @override
   void initState() {
@@ -89,6 +90,10 @@ class _CadastroPageState extends State<CadastroPage> {
                                     hintText: 'Digite seu CPF',
                                     labelText: "CPF",
                                   ),
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly,
+                                    CpfInputFormatter()
+                                  ],
                                   validator: (text) {
                                     return validateEmptyField(text);
                                   },
@@ -138,6 +143,10 @@ class _CadastroPageState extends State<CadastroPage> {
                                     hintText: 'Digite seu telefone',
                                     labelText: "Telefone",
                                   ),
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly,
+                                    TelefoneInputFormatter()
+                                  ],
                                   validator: (text) {
                                     return validateEmptyField(text);
                                   },
@@ -190,9 +199,8 @@ class _CadastroPageState extends State<CadastroPage> {
                                       _cidade = value!;
                                     });
                                   },
-                                  items: cidades!
-                                      .map<DropdownMenuItem<Cidade>>(
-                                          (Cidade value) {
+                                  items: cidades!.map<DropdownMenuItem<Cidade>>(
+                                      (Cidade value) {
                                     return DropdownMenuItem<Cidade>(
                                       value: value,
                                       child: Text(value.nome!),
@@ -277,6 +285,4 @@ class _CadastroPageState extends State<CadastroPage> {
   Future<List<Cidade>?> getCidades() async {
     return await cidadeController.getAllCidades();
   }
-
-  
 }

@@ -1,4 +1,6 @@
+import 'package:brasil_fields/brasil_fields.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:travel_care/controllers/cidade_controller.dart';
 import 'package:travel_care/controllers/pessoa_controller.dart';
 import 'package:travel_care/helpers/date_helper.dart';
@@ -103,6 +105,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                 hintText: 'Digite seu CPF',
                                 labelText: "CPF",
                               ),
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                                CpfInputFormatter()
+                              ],
                               validator: (text) {
                                 return validateEmptyField(text);
                               },
@@ -152,6 +158,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                 hintText: 'Digite seu telefone',
                                 labelText: "Telefone",
                               ),
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                                TelefoneInputFormatter()
+                              ],
                               validator: (text) {
                                 return validateEmptyField(text);
                               },
