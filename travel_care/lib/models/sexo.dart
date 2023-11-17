@@ -1,3 +1,3 @@
 enum Sexo {
-  masculino,feminino
+  masculino,feminino,outro
 }

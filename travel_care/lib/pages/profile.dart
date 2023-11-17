@@ -169,15 +169,12 @@ class _ProfilePageState extends State<ProfilePage> {
                             DropdownButtonFormField<Sexo>(
                               icon: const Icon(Icons.arrow_drop_down),
                               elevation: 16,
-                              //validator: (sexo) => validateNotNull(sexo),
                               decoration: const InputDecoration(
                                 labelText: "Sexo",
                               ),
-                              hint: const Text("Seleciona seu sexo"),
+                              hint: const Text("Selecione seu sexo"),
                               onChanged: (Sexo? value) {
-                                setState(() {
-                                  _sexo = value!;
-                                });
+                                _sexo = value!;
                               },
                               value: pessoa.sexo,
                               items: Sexo.values
@@ -209,9 +206,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               ),
                               hint: const Text("Selecione sua cidade"),
                               onChanged: (Cidade? value) {
-                                setState(() {
                                   _cidade = value!;
-                                });
                               },
                               value: _cidade,
                               items: cidades!.map<DropdownMenuItem<Cidade>>(

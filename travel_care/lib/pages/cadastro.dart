@@ -160,9 +160,7 @@ class _CadastroPageState extends State<CadastroPage> {
                                   ),
                                   hint: const Text("Seleciona seu sexo"),
                                   onChanged: (Sexo? value) {
-                                    setState(() {
                                       _sexo = value!;
-                                    });
                                   },
                                   items: Sexo.values
                                       .toList()
@@ -195,9 +193,7 @@ class _CadastroPageState extends State<CadastroPage> {
                                   ),
                                   hint: const Text("Selecione sua cidade"),
                                   onChanged: (Cidade? value) {
-                                    setState(() {
                                       _cidade = value!;
-                                    });
                                   },
                                   items: cidades!.map<DropdownMenuItem<Cidade>>(
                                       (Cidade value) {
