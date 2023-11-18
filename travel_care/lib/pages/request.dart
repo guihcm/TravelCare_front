@@ -40,7 +40,8 @@ class _RequestPageState extends State<RequestPage> {
   Cidade? _cidade;
   Finalidade? _finalidade;
 
-  late int a = 2;
+  //late int a = 2;
+  late String acompanhanteEscolhido = "";
 
   @override
   void initState() {
@@ -262,8 +263,14 @@ class _RequestPageState extends State<RequestPage> {
               ),
               TextButton(
                 onPressed: () {
-                  Navigator.of(context).pop();
-                  next(controllerCPF.text);
+                  if(controllerCPF.text == ""){
+                    Navigator.of(context).pop();
+                    alert();
+                  }
+                  else{
+                    Navigator.of(context).pop();
+                    next(controllerCPF.text);
+                  }
                 },
                 child: const Text(
                   'Confirmar',
@@ -281,11 +288,47 @@ class _RequestPageState extends State<RequestPage> {
     );
   }
 
+  alert(){
+    showDialog(
+      context: context, 
+      builder: (BuildContext context) => AlertDialog(
+              content: SingleChildScrollView(
+                // ignore: sort_child_properties_last
+                child: Column(
+                  children: <Widget>[
+                    const Text(
+                  'Digite um CPF',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 25),
+                Center(
+                  child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    acompanhante();
+                  }, 
+                  child: const Text(
+                  "Voltar",
+                  style: TextStyle(
+                  fontSize: 20,
+                            ),
+                          ),
+                        ))
+                  ],
+                ),
+              ),
+              
+              ),
+    );
+  }
+
   next(cpf){
-
-    final pessoaController = PessoaController();
-    late Future<Pessoa?> pessoaInit;
-
+  final pessoaController = PessoaController();
+  late Future<Pessoa?> pessoaInit;
 
   final controllerNome = TextEditingController();
   final controllerCPF = TextEditingController();
@@ -294,16 +337,12 @@ class _RequestPageState extends State<RequestPage> {
   final controllerTelefone = TextEditingController();
 
   DateTime? _dataNascimento;
-
-
     Future<Pessoa?> person(cpf) async {
       return await pessoaController.getAcompanhante(cpf);
   }
-
-    setState(() {
-      pessoaInit = person(cpf);
-    });
-
+  setState(() {
+    pessoaInit = person(cpf);
+  });
   showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -321,14 +360,16 @@ class _RequestPageState extends State<RequestPage> {
               );
               default:
               final pessoa = snapshot.data;
-              controllerNome.text = pessoa?.nomeCompleto ?? "";
-              controllerCPF.text = pessoa?.cpf ?? "";
-              controllerRG.text = pessoa?.rg ?? "";
-              controllerTelefone.text = pessoa?.telefone ?? "";
-              controllerDataNascimento.text =
-                  formatDateString(pessoa!.dataNascimento.toString()) ?? "";             
-                   
-
+              var a = false;
+              if(pessoa != null){
+                controllerNome.text = pessoa.nomeCompleto ?? "";
+                controllerCPF.text = pessoa.cpf ?? "";
+                controllerRG.text = pessoa.rg ?? "";
+                controllerTelefone.text = pessoa.telefone ?? "";
+                controllerDataNascimento.text =
+                    formatDateString(pessoa.dataNascimento.toString()) ?? "";             
+                a = true;
+              }   
 
               return AlertDialog(
               content: SingleChildScrollView(
@@ -344,6 +385,7 @@ class _RequestPageState extends State<RequestPage> {
                 ),
                 const SizedBox(height: 40),
                     TextFormField(
+                      readOnly: a,
                       controller: controllerNome,
                       decoration: const InputDecoration(
                         hintText: 'Digite o completo',
@@ -356,6 +398,7 @@ class _RequestPageState extends State<RequestPage> {
               
                   const SizedBox(height: 40),
                   TextFormField(
+                    readOnly: a,
                     controller: controllerCPF,
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
@@ -368,6 +411,7 @@ class _RequestPageState extends State<RequestPage> {
                   ),
                   const SizedBox(height: 40),
                   TextFormField(
+                    readOnly: a,
                     controller: controllerRG,
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
@@ -380,6 +424,7 @@ class _RequestPageState extends State<RequestPage> {
                   ),
                   const SizedBox(height: 40),
                   TextFormField(
+                    readOnly: a,
                     controller: controllerDataNascimento,
                     keyboardType: TextInputType.datetime,
                     decoration: const InputDecoration(
@@ -391,12 +436,15 @@ class _RequestPageState extends State<RequestPage> {
                       return validateEmptyField(text);
                     },
                     onTap: () async {
-                      _dataNascimento = await handleDate(
-                          context, controllerDataNascimento);
+                      if(a == false){
+                        _dataNascimento = await handleDate(
+                            context, controllerDataNascimento);
+                      }
                     },
                   ),
                   const SizedBox(height: 40),
                   TextFormField(
+                    readOnly: a,
                     controller: controllerTelefone,
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
@@ -407,10 +455,51 @@ class _RequestPageState extends State<RequestPage> {
                       return validateEmptyField(text);
                     },
                   ),
-                     
-                      
-                    
                     const SizedBox(height: 25),
+                                  
+                Row(
+                  mainAxisAlignment:
+                    MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      children: [
+                        TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(); // Fechar o diálogo
+                        },
+                        child: const Text(
+                          'Cancelar',
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+              ),
+                      ],
+                    ),
+              Column(
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      if(a == true){
+                        acompanhanteEscolhido = pessoa!.objectId!;
+                        Navigator.of(context).pop();
+                      }
+                    },
+                    child: const Text(
+                      'Confirmar',
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              ],
+              ),
                   ],
                 ),
               ),
