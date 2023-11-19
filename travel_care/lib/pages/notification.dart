@@ -58,60 +58,62 @@ class _NotificationPageState extends State<NotificationPage> {
                             itemCount: notificacoes.length,
                             itemBuilder: (context, index) => Padding(
                                   padding: const EdgeInsets.only(bottom: 2),
-                                  child: ListTile(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      leading: CircleAvatar(
-                                        backgroundColor: Colors.white10,
-                                        child: notificacoes[index].visto!
-                                            ? const Icon(
-                                                Icons.notifications_none)
-                                            : const Icon(
-                                                Icons.notifications_active),
-                                      ),
-                                      tileColor: notificacoes[index].visto!
-                                          ? Colors.white
-                                          : Colors.grey[200],
-                                      title: notificacoes[index].visto!
-                                          ? Text(notificacoes[index].texto!)
-                                          : Text(
-                                              notificacoes[index].texto!,
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                      trailing: PopupMenuButton<String>(
-                                        itemBuilder: (BuildContext context) {
-                                          return {'Marcar como visto'}
-                                              .map((String choice) {
-                                            return PopupMenuItem<String>(
-                                              value: choice,
-                                              child: Text(
-                                                choice,
+                                  child: Material(
+                                    child: ListTile(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(10),
+                                        ),
+                                        leading: CircleAvatar(
+                                          backgroundColor: Colors.white10,
+                                          child: notificacoes[index].visto!
+                                              ? const Icon(
+                                                  Icons.notifications_none)
+                                              : const Icon(
+                                                  Icons.notifications_active),
+                                        ),
+                                        tileColor: notificacoes[index].visto!
+                                            ? Colors.white
+                                            : Colors.grey[200],
+                                        title: notificacoes[index].visto!
+                                            ? Text(notificacoes[index].texto!)
+                                            : Text(
+                                                notificacoes[index].texto!,
                                                 style: const TextStyle(
-                                                    color: Colors.white),
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                               ),
-                                            );
-                                          }).toList();
-                                        },
-                                        onSelected: (String choice) {
-                                          if (choice == 'Marcar como visto') {
-                                            marcarComoVisto(
-                                                notificacoes[index]);
-                                          }
-                                        },
-                                        color: Colors.blue,
-                                      ),
-                                      onTap: () {
-                                      marcarComoVisto(notificacoes[index]);
-                                      showDialog(
-                                          context: context,
-                                          builder: (context) =>
-                                              RequestInfoDialog(
-                                                  notificacoes[index]
-                                                      .solicitacao!.objectId!));
-                                    },
+                                        trailing: PopupMenuButton<String>(
+                                          itemBuilder: (BuildContext context) {
+                                            return {'Marcar como visto'}
+                                                .map((String choice) {
+                                              return PopupMenuItem<String>(
+                                                value: choice,
+                                                child: Text(
+                                                  choice,
+                                                  style: const TextStyle(
+                                                      color: Colors.white),
+                                                ),
+                                              );
+                                            }).toList();
+                                          },
+                                          onSelected: (String choice) {
+                                            if (choice == 'Marcar como visto') {
+                                              marcarComoVisto(
+                                                  notificacoes[index]);
+                                            }
+                                          },
+                                          color: Colors.blue,
+                                        ),
+                                        onTap: () {
+                                        marcarComoVisto(notificacoes[index]);
+                                        showDialog(
+                                            context: context,
+                                            builder: (context) =>
+                                                RequestInfoDialog(
+                                                    notificacoes[index]
+                                                        .solicitacao!.objectId!));
+                                      },
+                                    ),
                                   ),
                                 ),
                                 )
