@@ -19,8 +19,10 @@ class NotificacaoController {
       log(response.results.toString());
       return response.results!.map((e) {
         final notificacao = e as Notificacao;
-        notificacao.solicitacao = Solicitacao()
-          ..objectId = notificacao["solicitacaoId"]!["objectId"];
+        if (notificacao["solicitacaoId"]?["objectId"] != null) {
+          notificacao.solicitacao = Solicitacao()
+            ..objectId = notificacao["solicitacaoId"]?["objectId"];
+        }
         return notificacao;
       }).toList();
     }
@@ -30,6 +32,11 @@ class NotificacaoController {
   }
 
   Future<void> editarNotificacao(Notificacao notificacao) async {
-    notificacao.save();
+    var response = await notificacao.save();
+    if (response.success) {
+      log("Notificação editada com sucesso.");
+    } else {
+      log("Falha ao editar notificação.");
+    }
   }
 }

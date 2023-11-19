@@ -73,8 +73,10 @@ class _ProfilePageState extends State<ProfilePage> {
               controllerCPF.text = pessoa.cpf ?? "";
               controllerRG.text = pessoa.rg ?? "";
               controllerCNS.text = pessoa.cns ?? "";
-              controllerDataNascimento.text =
-                  formatDateString(pessoa.dataNascimento.toString());
+              if(pessoa.dataNascimento != null){
+                controllerDataNascimento.text = 
+                   formatDateString(pessoa.dataNascimento.toString());
+              }
               controllerTelefone.text = pessoa.telefone ?? "";
               controllerEndereco.text = pessoa.endereco ?? "";
               controllerUsername.text = pessoa.username ?? "";

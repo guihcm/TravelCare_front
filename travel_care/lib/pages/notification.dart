@@ -106,12 +106,18 @@ class _NotificationPageState extends State<NotificationPage> {
                                         ),
                                         onTap: () {
                                         marcarComoVisto(notificacoes[index]);
-                                        showDialog(
-                                            context: context,
-                                            builder: (context) =>
-                                                RequestInfoDialog(
-                                                    notificacoes[index]
-                                                        .solicitacao!.objectId!));
+                                        if (notificacoes[index]
+                                                .solicitacao
+                                                ?.objectId !=
+                                            null) {
+                                          showDialog(
+                                              context: context,
+                                              builder: (context) =>
+                                                  RequestInfoDialog(
+                                                      notificacoes[index]
+                                                          .solicitacao!
+                                                          .objectId!));
+                                        }
                                       },
                                     ),
                                   ),
