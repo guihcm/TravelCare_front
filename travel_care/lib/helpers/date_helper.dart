@@ -14,10 +14,10 @@ Future<DateTime> handleDate(BuildContext context, TextEditingController controll
 
 Future<DateTime?> selectDate(
   BuildContext context) async {
-  FocusScope.of(context).requestFocus(FocusNode());
 
   return await showDatePicker(
       context: context,
+      initialEntryMode: DatePickerEntryMode.calendarOnly,
       initialDate: DateTime.now(),
       firstDate: DateTime(1900),
       lastDate: DateTime.now()); 
@@ -33,6 +33,8 @@ Future<void> selectTime(
     context: context,
     initialTime: TimeOfDay.now(),
   );
+
+  if (!context.mounted) return;
 
   if (picked != null) {
     timeController.text = picked.format(context);

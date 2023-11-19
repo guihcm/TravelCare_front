@@ -139,7 +139,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                             TextFormField(
                               controller: controllerDataNascimento,
-                              keyboardType: TextInputType.datetime,
+                              keyboardType: TextInputType.none,
                               decoration: const InputDecoration(
                                 hintText: 'Digite sua data de nascimento',
                                 labelText: "Data de nascimento",

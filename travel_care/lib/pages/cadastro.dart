@@ -122,7 +122,7 @@ class _CadastroPageState extends State<CadastroPage> {
                                 ),
                                 TextFormField(
                                   controller: controllerDataNascimento,
-                                  keyboardType: TextInputType.datetime,
+                                  keyboardType: TextInputType.none,
                                   decoration: const InputDecoration(
                                     hintText: 'Digite sua data de nascimento',
                                     labelText: "Data de nascimento",
