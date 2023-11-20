@@ -28,11 +28,11 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.blue),
       home: const InitPage(),
-      routes: {
-        '/notification': (context) => const NotificationPage(),
-        '/profile': (context) => const ProfilePage(),
-        '/travel': (context) => const TravelPage(),
-      },
+      //routes: {
+        //'/notification': (context) => const NotificationPage(),
+        //'/profile': (context) => const ProfilePage(),
+        //'/travel': (context) => const TravelPage(),
+      //},
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
       supportedLocales: const [Locale('pt', 'BR')],
     );

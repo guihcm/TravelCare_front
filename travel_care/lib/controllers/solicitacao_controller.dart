@@ -1,33 +1,40 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
+import 'package:travel_care/components/myDialog.dart';
 import 'package:travel_care/controllers/cidade_controller.dart';
 import 'package:travel_care/controllers/pessoa_controller.dart';
 import 'package:travel_care/models/cidade.dart';
+import 'package:travel_care/models/estado.dart';
+import 'package:travel_care/models/finalidade.dart';
 import 'package:travel_care/models/pessoa.dart';
+import 'package:travel_care/models/situacao.dart';
 import 'package:travel_care/models/solicitacao.dart';
+import 'package:travel_care/pages/init.dart';
 
 class SolicitacaoController {
   final cidadeController = CidadeController();
   final pessoaController = PessoaController();
-
 
   Future<Solicitacao?> getSolicitacao(String solicitacaoId) async {
     final queryBuilder = QueryBuilder<Solicitacao>(Solicitacao())
       ..whereEqualTo('objectId', solicitacaoId);
 
     final response = await queryBuilder.query();
-    
+
     if (response.success && response.results != null) {
       var solicitacao = response.results!.first as Solicitacao?;
-      
-      Cidade? cidade = await cidadeController.getCidade(solicitacao?["destinoId"]?["objectId"]);
+
+      Cidade? cidade = await cidadeController
+          .getCidade(solicitacao?["destinoId"]?["objectId"]);
       solicitacao?.destino = cidade;
-      
-      Pessoa? paciente = await pessoaController.getPessoa(solicitacao?["pacienteId"]?["objectId"]);
+
+      Pessoa? paciente = await pessoaController
+          .getPessoa(solicitacao?["pacienteId"]?["objectId"]);
       solicitacao?.paciente = paciente;
-      
-      Pessoa? acompanhante = await pessoaController.getPessoa(solicitacao?["acompanhanteId"]?["objectId"]);
+
+      Pessoa? acompanhante = await pessoaController
+          .getPessoa(solicitacao?["acompanhanteId"]?["objectId"]);
       solicitacao?.acompanhante = acompanhante ?? solicitacao.acompanhante;
 
       return solicitacao;
@@ -40,9 +47,8 @@ class SolicitacaoController {
   Future<List<Solicitacao>?> getAllSolicitacoes() async {
     var user = await pessoaController.loggedUser();
     final queryBuilder = QueryBuilder<Solicitacao>(Solicitacao())
-    ..whereEqualTo('pacienteId', user?.objectId)
-    ..orderByDescending('createdAt');
-
+      ..whereEqualTo('pacienteId', user?.objectId)
+      ..orderByDescending('createdAt');
 
     final response = await queryBuilder.query();
 
@@ -50,15 +56,65 @@ class SolicitacaoController {
 
     if (response.success && response.results != null) {
       log(response.results.toString());
-      return response.results!.map((e){
+      return response.results!.map((e) {
         final s = e as Solicitacao;
-        s.destino = cidades?.firstWhere((element) => element.objectId == s["destinoId"]?["objectId"]);
+        s.destino = cidades?.firstWhere(
+            (element) => element.objectId == s["destinoId"]?["objectId"]);
         log(s.destino.toString());
         return s;
-      } ).toList();
+      }).toList();
     }
 
     log(response.error!.message);
     return List<Solicitacao>.empty();
+  }
+
+  void solicitar(
+    BuildContext context,
+    Cidade? cidade,
+    DateTime? dataViagem,
+    TextEditingController controllerEndereco,
+    Finalidade? finalidade,
+    DateTime? timeViagem,
+    Pessoa? acompanhante,
+  ) async {
+    final solicitacao = Solicitacao();
+
+    //Pessoa? acompanhante = Pessoa()..objectId = "uPHlnNAF9b";
+    Pessoa? paciente = await pessoaController.loggedUser();
+    paciente = Pessoa()..objectId = paciente?.objectId.toString();
+
+    solicitacao.destino = cidade;
+    solicitacao.finalidade = finalidade;
+    solicitacao.horaEvento = timeViagem;
+    solicitacao.dataViagem = dataViagem;
+    solicitacao.endereco = controllerEndereco.text.trim();
+    solicitacao.situacao = Situacao.pendente;
+    solicitacao.paciente = paciente;
+    solicitacao.acompanhante = acompanhante;
+
+    var response = await solicitacao.save();
+
+    if (!context.mounted) return;
+
+    if (response.success) {
+      log("foi possivel");
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return MyDialog(
+                "Solicitaçao realizada com sucesso!",
+                () => Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => const InitPage())));
+          });
+    } else {
+      log("não foi possivel");
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return MyDialog("Algo deu errado. Tente novamente.",
+                () => Navigator.of(context).pop());
+          });
+    }
   }
 }

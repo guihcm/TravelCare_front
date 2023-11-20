@@ -139,7 +139,7 @@ class _RequestInfoDialogState extends State<RequestInfoDialog> {
                               ),
                             ),
                             Text(
-                              solicitacao.finalidade ?? "",
+                              solicitacao.finalidade?.name ?? "",
                               style: const TextStyle(
                                 color: Colors.black,
                                 fontSize: 18,

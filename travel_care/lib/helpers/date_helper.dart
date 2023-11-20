@@ -27,16 +27,23 @@ void formatControllerDate(TextEditingController controller) {
   controller.text = formatDateString(controller.text);
 }
 
-Future<void> selectTime(
+Future<DateTime?> selectTime(
     BuildContext context, TextEditingController timeController) async {
   TimeOfDay? picked = await showTimePicker(
     context: context,
     initialTime: TimeOfDay.now(),
   );
 
-  if (!context.mounted) return;
+  DateTime? date;
 
   if (picked != null) {
     timeController.text = picked.format(context);
+    date = hourToDate(picked);
   }
+  return date;
+}
+
+DateTime hourToDate(TimeOfDay picked) {
+  final now = DateTime.now();
+  return DateTime(now.year, now.month, now.day, picked.hour, picked.minute);
 }

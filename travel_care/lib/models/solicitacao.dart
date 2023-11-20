@@ -1,5 +1,6 @@
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 import 'package:travel_care/models/cidade.dart';
+import 'package:travel_care/models/finalidade.dart';
 import 'package:travel_care/models/pessoa.dart';
 import 'package:travel_care/models/situacao.dart';
 
@@ -18,6 +19,8 @@ class Solicitacao extends ParseObject {
   static const String keyDestinoId = 'destinoId';
   static const String keyPacienteId = 'pacienteId';
   static const String keyAcompanhanteId = 'acompanhanteId';
+  static const String keyEndereco = 'endereco';
+
 
   factory Solicitacao.fromParseObject(ParseObject? object) {
     return Solicitacao()
@@ -28,11 +31,17 @@ class Solicitacao extends ParseObject {
       ..horaEvento = object?[keyHoraEvento]
       ..destino = Cidade.fromParseObject(object?[keyDestinoId])
       ..paciente = Pessoa.fromParseUser(object?[keyPacienteId])
-      ..acompanhante = Pessoa.fromParseUser(object?[keyAcompanhanteId]);
+      ..acompanhante = Pessoa.fromParseUser(object?[keyAcompanhanteId])
+      ..endereco = object?[keyEndereco];
   }
 
-  String? get finalidade => get<String>(keyFinalidade);
-  set finalidade(String? finalidade) => set<String?>(keyFinalidade, finalidade);
+  Finalidade? get finalidade {
+    int? finalidadeIndex = get<int>(keyFinalidade);
+    if (finalidadeIndex == null) return null;
+    return Finalidade.values[finalidadeIndex];
+  }
+  set finalidade(Finalidade? finalidade) => set<int?>(keyFinalidade, finalidade?.index);
+
 
   Situacao? get situacao {
     int? situacaoIndex = get<int>(keySituacao);
@@ -60,4 +69,7 @@ class Solicitacao extends ParseObject {
   Pessoa? get acompanhante => get<Pessoa>(keyAcompanhanteId);
   set acompanhante(Pessoa? acompanhanteId) =>
       set<Pessoa?>(keyAcompanhanteId, acompanhanteId);
+
+  String? get endereco => get<String>(keyEndereco);
+  set endereco(String? endereco) => set<String?>(keyEndereco, endereco);
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:travel_care/controllers/cidade_controller.dart';
 import 'package:travel_care/controllers/pessoa_controller.dart';
+import 'package:travel_care/controllers/solicitacao_controller.dart';
 import 'package:travel_care/helpers/date_helper.dart';
 import 'package:travel_care/helpers/string_helper.dart';
 import 'package:travel_care/helpers/validation_helper.dart';
@@ -9,7 +10,7 @@ import 'package:travel_care/models/cidade.dart';
 import 'package:travel_care/models/finalidade.dart';
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:travel_care/models/pessoa.dart';
-
+import 'package:travel_care/models/sexo.dart';
 
 class RequestPage extends StatefulWidget {
   const RequestPage({super.key});
@@ -18,18 +19,16 @@ class RequestPage extends StatefulWidget {
   State<RequestPage> createState() => _RequestPageState();
 }
 
-
 class _RequestPageState extends State<RequestPage> {
   final _formKey = GlobalKey<FormState>();
-  
 
   final controllerDataViagem = TextEditingController();
   final controllerHoraViagem = TextEditingController();
 
-  final TextEditingController _timeController = TextEditingController();
+  final solicitacaoController = SolicitacaoController();
 
   late DateTime _dataViagem;
-  late TimeOfDay _horaViagem;
+  late DateTime? _horaViagem;
 
   late Future<List<Cidade>?> cidadeList;
 
@@ -40,7 +39,6 @@ class _RequestPageState extends State<RequestPage> {
   Cidade? _cidade;
   Finalidade? _finalidade;
 
-  //late int a = 2;
   late String acompanhanteEscolhido = "";
 
   @override
@@ -152,19 +150,21 @@ class _RequestPageState extends State<RequestPage> {
                                 ),
                                 const SizedBox(height: 40),
                                 TextFormField(
-                                  controller: _timeController,
+                                  controller: controllerHoraViagem,
                                   readOnly: true,
-                                  onTap: () =>
-                                      selectTime(context, _timeController),
+                                  onTap: () async {
+                                    _horaViagem = await selectTime(
+                                        context, controllerHoraViagem);
+                                  },
+                              
                                   decoration: const InputDecoration(
                                     labelText: 'Horário de Chegada:',
                                     hintText: 'Selecione o horário de chegada.',
                                     suffixIcon: Icon(Icons.access_time),
                                   ),
                                 ),
+
                                 const SizedBox(height: 40),
-
-
                                 Row(
                                   children: [
                                     Text('Possui um acompanhante? ',
@@ -172,7 +172,6 @@ class _RequestPageState extends State<RequestPage> {
                                           color: Colors.grey[700],
                                           fontSize: 18,
                                         )),
-                                  
                                     const SizedBox(width: 3),
                                     GestureDetector(
                                       child: const Text(
@@ -184,10 +183,9 @@ class _RequestPageState extends State<RequestPage> {
                                         ),
                                       ),
                                       onTap: () => acompanhante(),
-                                    ),                                  
+                                    ),
                                   ],
                                 ),
-
                                 const SizedBox(height: 40),
                                 ElevatedButton(
                                     child: const Text('Salvar',
@@ -195,7 +193,18 @@ class _RequestPageState extends State<RequestPage> {
                                           fontSize: 18,
                                         )),
                                     onPressed: () {
-
+                                      //if (_formKey.currentState!.validate()) {
+                                        Pessoa? person = Pessoa()..objectId = "uPHlnNAF9b";
+                                        solicitacaoController.solicitar(
+                                             context,
+                                             _cidade,
+                                             _dataViagem,
+                                             controllerEndereco,
+                                             _finalidade,
+                                             _horaViagem,
+                                             person,
+                                            );
+                                      //}
                                     }),
                               ],
                             ))),
@@ -210,7 +219,7 @@ class _RequestPageState extends State<RequestPage> {
 
   acompanhante() {
     final controllerCPF = TextEditingController();
-    
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -227,26 +236,22 @@ class _RequestPageState extends State<RequestPage> {
                   ),
                 ),
                 const SizedBox(height: 40),
-                
                 TextFormField(
-                  controller: controllerCPF,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    hintText: 'Digite seu CPF',
-                    labelText: "CPF",
-                  ),
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                    CpfInputFormatter()
+                    controller: controllerCPF,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      hintText: 'Digite seu CPF',
+                      labelText: "CPF",
+                    ),
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      CpfInputFormatter()
                     ],
-                  validator: (text) {
-                    return validateEmptyField(text);
-                  }
-                ),
-
-              ], 
+                    validator: (text) {
+                      return validateEmptyField(text);
+                    }),
+              ],
             ),
-
             actions: [
               TextButton(
                 onPressed: () {
@@ -263,11 +268,10 @@ class _RequestPageState extends State<RequestPage> {
               ),
               TextButton(
                 onPressed: () {
-                  if(controllerCPF.text == ""){
+                  if (controllerCPF.text == "") {
                     Navigator.of(context).pop();
                     alert();
-                  }
-                  else{
+                  } else {
                     Navigator.of(context).pop();
                     next(controllerCPF.text);
                   }
@@ -288,225 +292,244 @@ class _RequestPageState extends State<RequestPage> {
     );
   }
 
-  alert(){
+  alert() {
     showDialog(
-      context: context, 
+      context: context,
       builder: (BuildContext context) => AlertDialog(
-              content: SingleChildScrollView(
-                // ignore: sort_child_properties_last
-                child: Column(
-                  children: <Widget>[
-                    const Text(
-                  'Digite um CPF',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
+        content: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              const Text(
+                'Digite um CPF',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
                 ),
-                const SizedBox(height: 25),
-                Center(
+              ),
+              const SizedBox(height: 25),
+              Center(
                   child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    acompanhante();
-                  }, 
-                  child: const Text(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  acompanhante();
+                },
+                child: const Text(
                   "Voltar",
                   style: TextStyle(
-                  fontSize: 20,
-                            ),
-                          ),
-                        ))
-                  ],
+                    fontSize: 20,
+                  ),
                 ),
-              ),
-              
-              ),
+              ))
+            ],
+          ),
+        ),
+      ),
     );
   }
 
-  next(cpf){
-  final pessoaController = PessoaController();
-  late Future<Pessoa?> pessoaInit;
+  next(cpf) {
+    final pessoaController = PessoaController();
+    late Future<Pessoa?> pessoaInit;
 
-  final controllerNome = TextEditingController();
-  final controllerCPF = TextEditingController();
-  final controllerRG = TextEditingController();
-  final controllerDataNascimento = TextEditingController();
-  final controllerTelefone = TextEditingController();
+    final _formKei = GlobalKey<FormState>();
 
-  DateTime? _dataNascimento;
+    final controllerNome = TextEditingController();
+    final controllerCPF = TextEditingController();
+    final controllerRG = TextEditingController();
+    final controllerDataNascimento = TextEditingController();
+    final controllerTelefone = TextEditingController();
+
+    DateTime? _dataNascimento;
     Future<Pessoa?> person(cpf) async {
       return await pessoaController.getAcompanhante(cpf);
-  }
-  setState(() {
-    pessoaInit = person(cpf);
-  });
-  showDialog(
+    }
+
+    setState(() {
+      pessoaInit = person(cpf);
+    });
+    showDialog(
         context: context,
         builder: (BuildContext context) {
           return FutureBuilder(
-            future: pessoaInit,
-            builder: (context, snapshot){
-            switch (snapshot.connectionState) {
-            case ConnectionState.none:
-            case ConnectionState.waiting:
-              return const Center(
-                child: SizedBox(
-                    width: 100,
-                    height: 100,
-                    child: CircularProgressIndicator()),
-              );
-              default:
-              final pessoa = snapshot.data;
-              var a = false;
-              if(pessoa != null){
-                controllerNome.text = pessoa.nomeCompleto ?? "";
-                controllerCPF.text = pessoa.cpf ?? "";
-                controllerRG.text = pessoa.rg ?? "";
-                controllerTelefone.text = pessoa.telefone ?? "";
-                controllerDataNascimento.text =
-                    formatDateString(pessoa.dataNascimento.toString()) ?? "";             
-                a = true;
-              }   
+              future: pessoaInit,
+              builder: (context, snapshot) {
+                switch (snapshot.connectionState) {
+                  case ConnectionState.none:
+                  case ConnectionState.waiting:
+                    return const Center(
+                      child: SizedBox(
+                          width: 100,
+                          height: 100,
+                          child: CircularProgressIndicator()),
+                    );
+                  default:
+                    final pessoa = snapshot.data;
+                    var a = false;
+                    if (pessoa != null) {
+                      controllerNome.text = pessoa.nomeCompleto ?? "";
+                      controllerCPF.text = pessoa.cpf ?? "";
+                      controllerRG.text = pessoa.rg ?? "";
+                      controllerTelefone.text = pessoa.telefone ?? "";
+                      controllerDataNascimento.text =
+                          formatDateString(pessoa.dataNascimento.toString()) ??
+                              "";
+                      a = true;
+                    }
 
-              return AlertDialog(
-              content: SingleChildScrollView(
-                child: Column(
-                  children: <Widget>[
-                    const Text(
-                  'Informe seu Acompanhante',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 40),
-                    TextFormField(
-                      readOnly: a,
-                      controller: controllerNome,
-                      decoration: const InputDecoration(
-                        hintText: 'Digite o completo',
-                        labelText: "Nome Completo",
-                      ),
-                      validator: (text) {
-                        return validateEmptyField(text);
-                      },
-                  ),
-              
-                  const SizedBox(height: 40),
-                  TextFormField(
-                    readOnly: a,
-                    controller: controllerCPF,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      hintText: 'Digite seu CPF',
-                      labelText: "CPF",
-                    ),
-                    validator: (text) {
-                      return validateEmptyField(text);
-                    },
-                  ),
-                  const SizedBox(height: 40),
-                  TextFormField(
-                    readOnly: a,
-                    controller: controllerRG,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      hintText: 'Digite seu RG',
-                      labelText: "RG",
-                    ),
-                    validator: (text) {
-                      return validateEmptyField(text);
-                    },
-                  ),
-                  const SizedBox(height: 40),
-                  TextFormField(
-                    readOnly: a,
-                    controller: controllerDataNascimento,
-                    keyboardType: TextInputType.datetime,
-                    decoration: const InputDecoration(
-                      hintText: 'Digite sua data de nascimento',
-                      labelText: "Data de nascimento",
-                      suffixIcon: Icon(Icons.calendar_month),
-                    ),
-                    validator: (text) {
-                      return validateEmptyField(text);
-                    },
-                    onTap: () async {
-                      if(a == false){
-                        _dataNascimento = await handleDate(
-                            context, controllerDataNascimento);
-                      }
-                    },
-                  ),
-                  const SizedBox(height: 40),
-                  TextFormField(
-                    readOnly: a,
-                    controller: controllerTelefone,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      hintText: 'Digite seu telefone',
-                      labelText: "Telefone",
-                    ),
-                    validator: (text) {
-                      return validateEmptyField(text);
-                    },
-                  ),
-                    const SizedBox(height: 25),
-                                  
-                Row(
-                  mainAxisAlignment:
-                    MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      children: [
-                        TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop(); // Fechar o diálogo
-                        },
-                        child: const Text(
-                          'Cancelar',
-                          style: TextStyle(
-                            color: Colors.blue,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
+                    return AlertDialog(
+                      content: SingleChildScrollView(
+                        child: Column(
+                          children: <Widget>[
+                            const Text(
+                              'Informe seu Acompanhante',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 40),
+                            TextFormField(
+                              readOnly: a,
+                              controller: controllerNome,
+                              decoration: const InputDecoration(
+                                hintText: 'Digite o completo',
+                                labelText: "Nome Completo",
+                              ),
+                              validator: (text) {
+                                return validateEmptyField(text);
+                              },
+                            ),
+                            const SizedBox(height: 40),
+                            TextFormField(
+                              readOnly: a,
+                              controller: controllerCPF,
+                              keyboardType: TextInputType.number,
+                              decoration: const InputDecoration(
+                                hintText: 'Digite seu CPF',
+                                labelText: "CPF",
+                              ),
+                              validator: (text) {
+                                return validateEmptyField(text);
+                              },
+                            ),
+                            const SizedBox(height: 40),
+                            TextFormField(
+                              readOnly: a,
+                              controller: controllerRG,
+                              keyboardType: TextInputType.number,
+                              decoration: const InputDecoration(
+                                hintText: 'Digite seu RG',
+                                labelText: "RG",
+                              ),
+                              validator: (text) {
+                                return validateEmptyField(text);
+                              },
+                            ),
+                            const SizedBox(height: 40),
+                            TextFormField(
+                              readOnly: a,
+                              controller: controllerDataNascimento,
+                              keyboardType: TextInputType.datetime,
+                              decoration: const InputDecoration(
+                                hintText: 'Digite sua data de nascimento',
+                                labelText: "Data de nascimento",
+                                suffixIcon: Icon(Icons.calendar_month),
+                              ),
+                              validator: (text) {
+                                return validateEmptyField(text);
+                              },
+                              onTap: () async {
+                                if (a == false) {
+                                  _dataNascimento = await handleDate(
+                                      context, controllerDataNascimento);
+                                }
+                              },
+                            ),
+                            const SizedBox(height: 40),
+                            TextFormField(
+                              readOnly: a,
+                              controller: controllerTelefone,
+                              keyboardType: TextInputType.number,
+                              decoration: const InputDecoration(
+                                hintText: 'Digite seu telefone',
+                                labelText: "Telefone",
+                              ),
+                              validator: (text) {
+                                return validateEmptyField(text);
+                              },
+                            ),
+                            const SizedBox(height: 25),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  children: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context)
+                                            .pop(); // Fechar o diálogo
+                                      },
+                                      child: const Text(
+                                        'Cancelar',
+                                        style: TextStyle(
+                                          color: Colors.blue,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    TextButton(
+                                      onPressed: () {
+                                        if (a) {
+                                          acompanhanteEscolhido =
+                                              pessoa!.objectId!;
+                                          Navigator.of(context).pop();
+                                        }
+                                        else{
+                                          if (_formKei.currentState!.validate()) {
+                                        pessoaController.salvarUsuario(
+                                            context,
+                                            "" as TextEditingController,
+                                            "" as TextEditingController,
+                                            "" as TextEditingController,
+                                            "" as TextEditingController,
+                                            controllerNome,
+                                            controllerCPF,
+                                            controllerRG,
+                                            "" as TextEditingController,
+                                            _dataNascimento,
+                                            controllerTelefone,
+                                            "" as TextEditingController,
+                                            "" as Sexo?,
+                                            "" as Cidade?);
+                                      }
+                                        }
+                                      },
+                                      child: const Text(
+                                        'Confirmar',
+                                        style: TextStyle(
+                                          color: Colors.blue,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-              ),
-                      ],
-                    ),
-              Column(
-                children: [
-                  TextButton(
-                    onPressed: () {
-                      if(a == true){
-                        acompanhanteEscolhido = pessoa!.objectId!;
-                        Navigator.of(context).pop();
-                      }
-                    },
-                    child: const Text(
-                      'Confirmar',
-                      style: TextStyle(
-                        color: Colors.blue,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
                       ),
-                    ),
-                  ),
-                ],
-              ),
-              ],
-              ),
-                  ],
-                ),
-              ),
-            );
-              }}            
-          );
+                    );
+                }
+              });
         });
   }
-  
 }
