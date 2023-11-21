@@ -5,7 +5,6 @@ import 'package:travel_care/components/myDialog.dart';
 import 'package:travel_care/controllers/cidade_controller.dart';
 import 'package:travel_care/controllers/pessoa_controller.dart';
 import 'package:travel_care/models/cidade.dart';
-import 'package:travel_care/models/estado.dart';
 import 'package:travel_care/models/finalidade.dart';
 import 'package:travel_care/models/pessoa.dart';
 import 'package:travel_care/models/situacao.dart';
@@ -80,7 +79,6 @@ class SolicitacaoController {
   ) async {
     final solicitacao = Solicitacao();
 
-    //Pessoa? acompanhante = Pessoa()..objectId = "uPHlnNAF9b";
     Pessoa? paciente = await pessoaController.loggedUser();
     paciente = Pessoa()..objectId = paciente?.objectId.toString();
 
@@ -91,14 +89,35 @@ class SolicitacaoController {
     solicitacao.endereco = controllerEndereco.text.trim();
     solicitacao.situacao = Situacao.pendente;
     solicitacao.paciente = paciente;
-    solicitacao.acompanhante = acompanhante;
 
     var response = await solicitacao.save();
 
     if (!context.mounted) return;
 
     if (response.success) {
-      log("foi possivel");
+      log("Criação de solicitação realizada com sucesso!");
+
+      if (acompanhante != null) {
+        final result = await ParseCloudFunction('updateSolicitacaoAcompanhante')
+            .execute(parameters: {
+          'acompanhanteId': acompanhante.objectId,
+          'solicitacaoId': solicitacao.objectId,
+        });
+
+        if (!context.mounted) return;
+
+        if (result.success) {
+          log("Adição de acompanhante na solicitação realizada com sucesso!");
+        } else {
+          log("Adição de acompanhante na solicitação falhou!");
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return MyDialog("Algo deu errado. Tente novamente.",
+                    () => Navigator.of(context).pop());
+              });
+        }
+      }
       showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -108,7 +127,7 @@ class SolicitacaoController {
                     MaterialPageRoute(builder: (context) => const InitPage())));
           });
     } else {
-      log("não foi possivel");
+      log("Criação de solicitação falhou!");
       showDialog(
           context: context,
           builder: (BuildContext context) {
