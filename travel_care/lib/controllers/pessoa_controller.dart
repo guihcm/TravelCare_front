@@ -8,7 +8,6 @@ import 'package:travel_care/pages/home.dart';
 import 'package:travel_care/pages/login.dart';
 
 class PessoaController {
-  
   Future<Pessoa?> loggedUser() async {
     final user = await ParseUser.currentUser() as ParseUser?;
     if (user != null) {
@@ -79,49 +78,66 @@ class PessoaController {
 
   void salvarUsuario(
       BuildContext context,
-      TextEditingController controllerPassword,
-      TextEditingController controllerPasswordConfirmation,
-      TextEditingController controllerUsername,
-      TextEditingController controllerEmail,
-      TextEditingController controllerNome,
-      TextEditingController controllerCPF,
-      TextEditingController controllerRG,
-      TextEditingController controllerCNS,
+      TextEditingController? controllerPassword,
+      TextEditingController? controllerPasswordConfirmation,
+      TextEditingController? controllerUsername,
+      TextEditingController? controllerEmail,
+      TextEditingController? controllerNome,
+      TextEditingController? controllerCPF,
+      TextEditingController? controllerRG,
+      TextEditingController? controllerCNS,
       DateTime? dataNascimento,
-      TextEditingController controllerTelefone,
-      TextEditingController controllerEndereco,
+      TextEditingController? controllerTelefone,
+      TextEditingController? controllerEndereco,
       Sexo? sexo,
       Cidade? cidade) async {
-    final password = controllerPassword.text.trim();
-    final passwordConfirmation = controllerPasswordConfirmation.text.trim();
+    final String? password;
+    if (controllerPassword != null) {
+      password = controllerPassword.text.trim();
 
-    if (password != passwordConfirmation) {
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return MyDialog(
-                "Senhas diferentes.", () => Navigator.of(context).pop());
-          });
-      return;
+      final passwordConfirmation = controllerPasswordConfirmation?.text.trim();
+
+      if (password != passwordConfirmation) {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return MyDialog(
+                  "Senhas diferentes.", () => Navigator.of(context).pop());
+            });
+        return;
+      }
+    } else {
+      password = controllerCPF?.text;
     }
 
-    final username = controllerUsername.text.trim();
-    final email = controllerEmail.text.trim();
+    String? username;
+    if (controllerUsername == null) {
+      username = controllerCPF?.text.trim();
+    } else {
+      username = controllerUsername.text.trim();
+    }
+
+    final email = controllerEmail?.text.trim();
 
     final pessoa =
         Pessoa(username: username, password: password, emailAddress: email);
 
-    pessoa.nomeCompleto = controllerNome.text.trim();
-    pessoa.cpf = controllerCPF.text.trim();
-    pessoa.rg = controllerRG.text.trim();
-    pessoa.cns = controllerCNS.text.trim();
+    pessoa.nomeCompleto = controllerNome?.text.trim();
+    pessoa.cpf = controllerCPF?.text.trim();
+    pessoa.rg = controllerRG?.text.trim();
+    pessoa.cns = controllerCNS?.text.trim();
     pessoa.dataNascimento = dataNascimento;
-    pessoa.telefone = controllerTelefone.text.trim();
-    pessoa.endereco = controllerEndereco.text.trim();
+    pessoa.telefone = controllerTelefone?.text.trim();
+    pessoa.endereco = controllerEndereco?.text.trim();
     pessoa.sexo = sexo;
     pessoa.cidade = cidade;
 
-    var response = await pessoa.signUp();
+    ParseResponse response;
+    if (controllerEmail == null) {
+      response = await pessoa.signUp(allowWithoutEmail: true);
+    } else {
+      response = await pessoa.signUp();
+    }
 
     if (!context.mounted) return;
 
@@ -170,7 +186,6 @@ class PessoaController {
       TextEditingController controllerEndereco,
       Sexo? sexo,
       Cidade? cidade) async {
-
     final pessoa = await loggedUser();
 
     pessoa!.username = controllerUsername.text.trim();
@@ -219,7 +234,6 @@ class PessoaController {
 
   void recuperarSenha(
       BuildContext context, TextEditingController controllerEmail) async {
-
     var email = controllerEmail.text.trim();
 
     // consultar se email existe
@@ -251,8 +265,8 @@ class PessoaController {
     }
   }
 
-  Future<Pessoa?> getPessoa(String? pessoaId) async{
-    if(pessoaId == null) return null;
+  Future<Pessoa?> getPessoa(String? pessoaId) async {
+    if (pessoaId == null) return null;
 
     final queryBuilder = QueryBuilder<Pessoa>(Pessoa())
       ..whereEqualTo('objectId', pessoaId);
@@ -265,8 +279,8 @@ class PessoaController {
     return null;
   }
 
-    Future<Pessoa?> getAcompanhante(String? pessoaCpf) async{
-    if(pessoaCpf == null) return null;
+  Future<Pessoa?> getAcompanhante(String? pessoaCpf) async {
+    if (pessoaCpf == null) return null;
 
     final queryBuilder = QueryBuilder<Pessoa>(Pessoa())
       ..whereEqualTo('CPF', pessoaCpf);
@@ -279,8 +293,8 @@ class PessoaController {
     return null;
   }
 
-    getAcompanhant(String? pessoaCpf) async{
-    if(pessoaCpf == null) return null;
+  getAcompanhant(String? pessoaCpf) async {
+    if (pessoaCpf == null) return null;
 
     final queryBuilder = QueryBuilder<Pessoa>(Pessoa())
       ..whereEqualTo('CPF', pessoaCpf);

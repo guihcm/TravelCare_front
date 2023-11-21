@@ -4,13 +4,12 @@ import 'package:travel_care/controllers/cidade_controller.dart';
 import 'package:travel_care/controllers/pessoa_controller.dart';
 import 'package:travel_care/controllers/solicitacao_controller.dart';
 import 'package:travel_care/helpers/date_helper.dart';
-import 'package:travel_care/helpers/string_helper.dart';
 import 'package:travel_care/helpers/validation_helper.dart';
 import 'package:travel_care/models/cidade.dart';
 import 'package:travel_care/models/finalidade.dart';
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:travel_care/models/pessoa.dart';
-import 'package:travel_care/models/sexo.dart';
+import 'package:travel_care/pages/request_next.dart';
 
 class RequestPage extends StatefulWidget {
   const RequestPage({super.key});
@@ -38,8 +37,6 @@ class _RequestPageState extends State<RequestPage> {
 
   Cidade? _cidade;
   Finalidade? _finalidade;
-
-  late String acompanhanteEscolhido = "";
 
   @override
   void initState() {
@@ -156,14 +153,12 @@ class _RequestPageState extends State<RequestPage> {
                                     _horaViagem = await selectTime(
                                         context, controllerHoraViagem);
                                   },
-                              
                                   decoration: const InputDecoration(
                                     labelText: 'Horário de Chegada:',
                                     hintText: 'Selecione o horário de chegada.',
                                     suffixIcon: Icon(Icons.access_time),
                                   ),
                                 ),
-
                                 const SizedBox(height: 40),
                                 Row(
                                   children: [
@@ -194,16 +189,17 @@ class _RequestPageState extends State<RequestPage> {
                                         )),
                                     onPressed: () {
                                       //if (_formKey.currentState!.validate()) {
-                                        Pessoa? person = Pessoa()..objectId = "uPHlnNAF9b";
-                                        solicitacaoController.solicitar(
-                                             context,
-                                             _cidade,
-                                             _dataViagem,
-                                             controllerEndereco,
-                                             _finalidade,
-                                             _horaViagem,
-                                             person,
-                                            );
+                                      Pessoa? person = Pessoa()
+                                        ..objectId = "uPHlnNAF9b";
+                                      solicitacaoController.solicitar(
+                                        context,
+                                        _cidade,
+                                        _dataViagem,
+                                        controllerEndereco,
+                                        _finalidade,
+                                        _horaViagem,
+                                        person,
+                                      );
                                       //}
                                     }),
                               ],
@@ -329,207 +325,10 @@ class _RequestPageState extends State<RequestPage> {
   }
 
   next(cpf) {
-    final pessoaController = PessoaController();
-    late Future<Pessoa?> pessoaInit;
-
-    final _formKei = GlobalKey<FormState>();
-
-    final controllerNome = TextEditingController();
-    final controllerCPF = TextEditingController();
-    final controllerRG = TextEditingController();
-    final controllerDataNascimento = TextEditingController();
-    final controllerTelefone = TextEditingController();
-
-    DateTime? _dataNascimento;
-    Future<Pessoa?> person(cpf) async {
-      return await pessoaController.getAcompanhante(cpf);
-    }
-
-    setState(() {
-      pessoaInit = person(cpf);
-    });
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return FutureBuilder(
-              future: pessoaInit,
-              builder: (context, snapshot) {
-                switch (snapshot.connectionState) {
-                  case ConnectionState.none:
-                  case ConnectionState.waiting:
-                    return const Center(
-                      child: SizedBox(
-                          width: 100,
-                          height: 100,
-                          child: CircularProgressIndicator()),
-                    );
-                  default:
-                    final pessoa = snapshot.data;
-                    var a = false;
-                    if (pessoa != null) {
-                      controllerNome.text = pessoa.nomeCompleto ?? "";
-                      controllerCPF.text = pessoa.cpf ?? "";
-                      controllerRG.text = pessoa.rg ?? "";
-                      controllerTelefone.text = pessoa.telefone ?? "";
-                      controllerDataNascimento.text =
-                          formatDateString(pessoa.dataNascimento.toString()) ??
-                              "";
-                      a = true;
-                    }
-
-                    return AlertDialog(
-                      content: SingleChildScrollView(
-                        child: Column(
-                          children: <Widget>[
-                            const Text(
-                              'Informe seu Acompanhante',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 40),
-                            TextFormField(
-                              readOnly: a,
-                              controller: controllerNome,
-                              decoration: const InputDecoration(
-                                hintText: 'Digite o completo',
-                                labelText: "Nome Completo",
-                              ),
-                              validator: (text) {
-                                return validateEmptyField(text);
-                              },
-                            ),
-                            const SizedBox(height: 40),
-                            TextFormField(
-                              readOnly: a,
-                              controller: controllerCPF,
-                              keyboardType: TextInputType.number,
-                              decoration: const InputDecoration(
-                                hintText: 'Digite seu CPF',
-                                labelText: "CPF",
-                              ),
-                              validator: (text) {
-                                return validateEmptyField(text);
-                              },
-                            ),
-                            const SizedBox(height: 40),
-                            TextFormField(
-                              readOnly: a,
-                              controller: controllerRG,
-                              keyboardType: TextInputType.number,
-                              decoration: const InputDecoration(
-                                hintText: 'Digite seu RG',
-                                labelText: "RG",
-                              ),
-                              validator: (text) {
-                                return validateEmptyField(text);
-                              },
-                            ),
-                            const SizedBox(height: 40),
-                            TextFormField(
-                              readOnly: a,
-                              controller: controllerDataNascimento,
-                              keyboardType: TextInputType.datetime,
-                              decoration: const InputDecoration(
-                                hintText: 'Digite sua data de nascimento',
-                                labelText: "Data de nascimento",
-                                suffixIcon: Icon(Icons.calendar_month),
-                              ),
-                              validator: (text) {
-                                return validateEmptyField(text);
-                              },
-                              onTap: () async {
-                                if (a == false) {
-                                  _dataNascimento = await handleDate(
-                                      context, controllerDataNascimento);
-                                }
-                              },
-                            ),
-                            const SizedBox(height: 40),
-                            TextFormField(
-                              readOnly: a,
-                              controller: controllerTelefone,
-                              keyboardType: TextInputType.number,
-                              decoration: const InputDecoration(
-                                hintText: 'Digite seu telefone',
-                                labelText: "Telefone",
-                              ),
-                              validator: (text) {
-                                return validateEmptyField(text);
-                              },
-                            ),
-                            const SizedBox(height: 25),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Column(
-                                  children: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context)
-                                            .pop(); // Fechar o diálogo
-                                      },
-                                      child: const Text(
-                                        'Cancelar',
-                                        style: TextStyle(
-                                          color: Colors.blue,
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Column(
-                                  children: [
-                                    TextButton(
-                                      onPressed: () {
-                                        if (a) {
-                                          acompanhanteEscolhido =
-                                              pessoa!.objectId!;
-                                          Navigator.of(context).pop();
-                                        }
-                                        else{
-                                          if (_formKei.currentState!.validate()) {
-                                        pessoaController.salvarUsuario(
-                                            context,
-                                            "" as TextEditingController,
-                                            "" as TextEditingController,
-                                            "" as TextEditingController,
-                                            "" as TextEditingController,
-                                            controllerNome,
-                                            controllerCPF,
-                                            controllerRG,
-                                            "" as TextEditingController,
-                                            _dataNascimento,
-                                            controllerTelefone,
-                                            "" as TextEditingController,
-                                            "" as Sexo?,
-                                            "" as Cidade?);
-                                      }
-                                        }
-                                      },
-                                      child: const Text(
-                                        'Confirmar',
-                                        style: TextStyle(
-                                          color: Colors.blue,
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                }
-              });
+          return RequestNextDialog(cpf);
         });
   }
 }
