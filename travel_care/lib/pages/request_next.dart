@@ -209,7 +209,6 @@ class _RequestNextDialogState extends State<RequestNextDialog> {
                                             null,
                                             null,
                                             null);
-                                        Navigator.of(context).pop();
                                       }
                                     }
                                   },

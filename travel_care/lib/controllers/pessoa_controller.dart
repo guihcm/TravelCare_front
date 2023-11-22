@@ -1,4 +1,3 @@
-import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
@@ -164,7 +163,7 @@ class PessoaController {
             builder: (BuildContext context) {
               return MyDialog("Cadastro realizado com sucesso!",
                   () => Navigator.of(context).pop());
-            });
+            }).then((value) => Navigator.of(context).pop());
 
         return true;
       }
