@@ -96,7 +96,7 @@ class _RequestPageState extends State<RequestPage> {
                                 const SizedBox(height: 40),
                                 TextFormField(
                                   controller: controllerDataViagem,
-                                  keyboardType: TextInputType.datetime,
+                                  keyboardType: TextInputType.none,
                                   decoration: const InputDecoration(
                                     hintText: 'Digite a data da viagem',
                                     labelText: "Data da viagem",
@@ -189,13 +189,13 @@ class _RequestPageState extends State<RequestPage> {
                                         )),
                                     onPressed: () {
                                       //if (_formKey.currentState!.validate()) {
-                                      
+
                                       //********************* */
-                                      
+
                                       // Com acompanhante
                                       Pessoa? acompanhante = Pessoa()
                                         ..objectId = "HUfvmsGNZQ";
-                                      
+
                                       // Sem acompanhante
                                       //Pessoa? acompanhante;
 

@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 import 'package:travel_care/components/myDialog.dart';
@@ -70,13 +72,14 @@ class PessoaController {
       showDialog(
           context: context,
           builder: (BuildContext context) {
-            return MyDialog("Algo deu errado. Tente novamente.",
-                () => Navigator.of(context).pop());
+            return MyDialog("Algo deu errado. Tente novamente.", () {
+              Navigator.of(context).pop();
+            });
           });
     }
   }
 
-  void salvarUsuario(
+  Future<bool> salvarUsuario(
       BuildContext context,
       TextEditingController? controllerPassword,
       TextEditingController? controllerPasswordConfirmation,
@@ -104,7 +107,7 @@ class PessoaController {
               return MyDialog(
                   "Senhas diferentes.", () => Navigator.of(context).pop());
             });
-        return;
+        return false;
       }
     } else {
       password = controllerCPF?.text;
@@ -139,20 +142,32 @@ class PessoaController {
       response = await pessoa.signUp();
     }
 
-    if (!context.mounted) return;
+    if (!context.mounted) return false;
 
     if (response.success) {
       pessoa.deleteLocalUserData();
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return MyDialog(
-                "Cadastro realizado com sucesso!",
-                () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const LoginPage())));
-          });
+      if (sexo != null && cidade != null) {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return MyDialog(
+                  "Cadastro realizado com sucesso!",
+                  () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const LoginPage())));
+            });
+        return false;
+      } else {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return MyDialog("Cadastro realizado com sucesso!",
+                  () => Navigator.of(context).pop());
+            });
+
+        return true;
+      }
     } else {
       showDialog(
           context: context,
@@ -170,6 +185,7 @@ class PessoaController {
                             : "Algo deu errado. Tente novamente.")),
                 () => Navigator.of(context).pop());
           });
+      return false;
     }
   }
 

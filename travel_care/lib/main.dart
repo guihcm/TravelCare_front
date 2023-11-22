@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 import 'package:travel_care/pages/init.dart';
-import 'package:travel_care/pages/notification.dart';
-import 'package:travel_care/pages/profile.dart';
-import 'package:travel_care/pages/travel.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() async {
@@ -28,11 +25,6 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.blue),
       home: const InitPage(),
-      //routes: {
-        //'/notification': (context) => const NotificationPage(),
-        //'/profile': (context) => const ProfilePage(),
-        //'/travel': (context) => const TravelPage(),
-      //},
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
       supportedLocales: const [Locale('pt', 'BR')],
     );

@@ -1,4 +1,6 @@
+import 'package:brasil_fields/brasil_fields.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:travel_care/controllers/pessoa_controller.dart';
 import 'package:travel_care/helpers/date_helper.dart';
 import 'package:travel_care/helpers/string_helper.dart';
@@ -55,7 +57,7 @@ class _RequestNextDialogState extends State<RequestNextDialog> {
               );
             default:
               final pessoa = snapshot.data;
-              var a = false;
+              var readOnly = false;
               if (pessoa != null) {
                 controllerNome.text = pessoa.nomeCompleto ?? "";
                 controllerCPF.text = pessoa.cpf ?? "";
@@ -63,7 +65,9 @@ class _RequestNextDialogState extends State<RequestNextDialog> {
                 controllerTelefone.text = pessoa.telefone ?? "";
                 controllerDataNascimento.text =
                     formatDateString(pessoa.dataNascimento.toString()) ?? "";
-                a = true;
+                readOnly = true;
+              } else {
+                controllerCPF.text = widget.cpf;
               }
 
               return AlertDialog(
@@ -82,7 +86,7 @@ class _RequestNextDialogState extends State<RequestNextDialog> {
                         ),
                         const SizedBox(height: 40),
                         TextFormField(
-                          readOnly: a,
+                          readOnly: readOnly,
                           controller: controllerNome,
                           decoration: const InputDecoration(
                             hintText: 'Digite o completo',
@@ -94,20 +98,24 @@ class _RequestNextDialogState extends State<RequestNextDialog> {
                         ),
                         const SizedBox(height: 40),
                         TextFormField(
-                          readOnly: a,
+                          readOnly: readOnly,
                           controller: controllerCPF,
                           keyboardType: TextInputType.number,
                           decoration: const InputDecoration(
                             hintText: 'Digite seu CPF',
                             labelText: "CPF",
                           ),
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            CpfInputFormatter()
+                          ],
                           validator: (text) {
                             return validateEmptyField(text);
                           },
                         ),
                         const SizedBox(height: 40),
                         TextFormField(
-                          readOnly: a,
+                          readOnly: readOnly,
                           controller: controllerRG,
                           keyboardType: TextInputType.number,
                           decoration: const InputDecoration(
@@ -120,9 +128,9 @@ class _RequestNextDialogState extends State<RequestNextDialog> {
                         ),
                         const SizedBox(height: 40),
                         TextFormField(
-                          readOnly: a,
+                          readOnly: readOnly,
                           controller: controllerDataNascimento,
-                          keyboardType: TextInputType.datetime,
+                          keyboardType: TextInputType.none,
                           decoration: const InputDecoration(
                             hintText: 'Digite sua data de nascimento',
                             labelText: "Data de nascimento",
@@ -132,7 +140,7 @@ class _RequestNextDialogState extends State<RequestNextDialog> {
                             return validateEmptyField(text);
                           },
                           onTap: () async {
-                            if (a == false) {
+                            if (readOnly == false) {
                               _dataNascimento = await handleDate(
                                   context, controllerDataNascimento);
                             }
@@ -140,13 +148,17 @@ class _RequestNextDialogState extends State<RequestNextDialog> {
                         ),
                         const SizedBox(height: 40),
                         TextFormField(
-                          readOnly: a,
+                          readOnly: readOnly,
                           controller: controllerTelefone,
                           keyboardType: TextInputType.number,
                           decoration: const InputDecoration(
                             hintText: 'Digite seu telefone',
                             labelText: "Telefone",
                           ),
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            TelefoneInputFormatter()
+                          ],
                           validator: (text) {
                             return validateEmptyField(text);
                           },
@@ -177,7 +189,7 @@ class _RequestNextDialogState extends State<RequestNextDialog> {
                               children: [
                                 TextButton(
                                   onPressed: () {
-                                    if (a) {
+                                    if (readOnly) {
                                       acompanhanteEscolhido = pessoa!.objectId!;
                                       Navigator.of(context).pop();
                                     } else {
@@ -197,6 +209,7 @@ class _RequestNextDialogState extends State<RequestNextDialog> {
                                             null,
                                             null,
                                             null);
+                                        Navigator.of(context).pop();
                                       }
                                     }
                                   },
