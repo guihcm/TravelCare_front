@@ -25,8 +25,12 @@ class Solicitacao extends ParseObject {
   factory Solicitacao.fromParseObject(ParseObject? object) {
     return Solicitacao()
       ..objectId = object?.objectId
-      ..finalidade = object?[keyFinalidade]
-      ..situacao = Situacao.values[object?[keySituacao]]
+      ..finalidade = object?[keyFinalidade] != null
+          ? Finalidade.values[object?[keyFinalidade]]
+          : null
+      ..situacao = object?[keySituacao] != null
+          ? Situacao.values[object?[keySituacao]]
+          : null
       ..dataViagem = object?[keyDataViagem]
       ..horaEvento = object?[keyHoraEvento]
       ..destino = Cidade.fromParseObject(object?[keyDestinoId])

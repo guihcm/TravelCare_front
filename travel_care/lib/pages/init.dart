@@ -29,7 +29,8 @@ class _InitPageState extends State<InitPage> {
                     child: CircularProgressIndicator()),
               );
             default:
-              if (!snapshot.hasData || !snapshot.data!) {
+              bool? logged = snapshot.data;
+              if (logged == null || !logged) {
                 return const Scaffold(
                   body: LoginPage(),
                 );

@@ -32,7 +32,9 @@ class Pessoa extends ParseUser implements ParseCloneable {
       ..cns = user?[keyCns]
       ..dataNascimento = user?[keyDataNascimento]
       ..telefone = user?[keyTelefone]
-      ..sexo = Sexo.values[user?[keySexo]]
+      ..sexo = user?[keySexo] != null 
+            ? Sexo.values[user?[keySexo]] 
+            : null
       ..endereco = user?[keyEndereco]
       ..cidade = Cidade.fromParseObject(user?[keyCidade]);
   }
