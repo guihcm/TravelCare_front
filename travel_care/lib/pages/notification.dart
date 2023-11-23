@@ -53,58 +53,58 @@ class _NotificationPageState extends State<NotificationPage> {
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.only(bottom: 20),
-                        child: notificacoes!.isNotEmpty 
-                        ? ListView.builder(
-                            itemCount: notificacoes.length,
-                            itemBuilder: (context, index) => Padding(
+                        child: notificacoes!.isNotEmpty
+                            ? ListView.builder(
+                                itemCount: notificacoes.length,
+                                itemBuilder: (context, index) => Padding(
                                   padding: const EdgeInsets.only(bottom: 2),
                                   child: Material(
                                     child: ListTile(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(10),
-                                        ),
-                                        leading: CircleAvatar(
-                                          backgroundColor: Colors.white10,
-                                          child: notificacoes[index].visto!
-                                              ? const Icon(
-                                                  Icons.notifications_none)
-                                              : const Icon(
-                                                  Icons.notifications_active),
-                                        ),
-                                        tileColor: notificacoes[index].visto!
-                                            ? Colors.white
-                                            : Colors.grey[200],
-                                        title: notificacoes[index].visto!
-                                            ? Text(notificacoes[index].texto!)
-                                            : Text(
-                                                notificacoes[index].texto!,
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      leading: CircleAvatar(
+                                        backgroundColor: Colors.white10,
+                                        child: notificacoes[index].visto!
+                                            ? const Icon(
+                                                Icons.notifications_none)
+                                            : const Icon(
+                                                Icons.notifications_active),
+                                      ),
+                                      tileColor: notificacoes[index].visto!
+                                          ? Colors.white
+                                          : Colors.grey[200],
+                                      title: notificacoes[index].visto!
+                                          ? Text(notificacoes[index].texto!)
+                                          : Text(
+                                              notificacoes[index].texto!,
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
                                               ),
-                                        trailing: PopupMenuButton<String>(
-                                          itemBuilder: (BuildContext context) {
-                                            return {'Marcar como visto'}
-                                                .map((String choice) {
-                                              return PopupMenuItem<String>(
-                                                value: choice,
-                                                child: Text(
-                                                  choice,
-                                                  style: const TextStyle(
-                                                      color: Colors.white),
-                                                ),
-                                              );
-                                            }).toList();
-                                          },
-                                          onSelected: (String choice) {
-                                            if (choice == 'Marcar como visto') {
-                                              marcarComoVisto(
-                                                  notificacoes[index]);
-                                            }
-                                          },
-                                          color: Colors.blue,
-                                        ),
-                                        onTap: () {
+                                            ),
+                                      trailing: PopupMenuButton<String>(
+                                        itemBuilder: (BuildContext context) {
+                                          return {'Marcar como visto'}
+                                              .map((String choice) {
+                                            return PopupMenuItem<String>(
+                                              value: choice,
+                                              child: Text(
+                                                choice,
+                                                style: const TextStyle(
+                                                    color: Colors.white),
+                                              ),
+                                            );
+                                          }).toList();
+                                        },
+                                        onSelected: (String choice) {
+                                          if (choice == 'Marcar como visto') {
+                                            marcarComoVisto(
+                                                notificacoes[index]);
+                                          }
+                                        },
+                                        color: Colors.blue,
+                                      ),
+                                      onTap: () {
                                         marcarComoVisto(notificacoes[index]);
                                         if (notificacoes[index]
                                                 .solicitacao
@@ -122,9 +122,9 @@ class _NotificationPageState extends State<NotificationPage> {
                                     ),
                                   ),
                                 ),
-                                )
-                        : Center(
-                          child: SizedBox(
+                              )
+                            : Center(
+                                child: SizedBox(
                                   height: 25,
                                   child: Text(
                                     "Você ainda não tem notificações.",
@@ -135,7 +135,7 @@ class _NotificationPageState extends State<NotificationPage> {
                                     ),
                                   ),
                                 ),
-                        ),
+                              ),
                       ),
                     ),
                   ]),

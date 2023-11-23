@@ -191,7 +191,8 @@ class _RequestNextDialogState extends State<RequestNextDialog> {
                                   onPressed: () {
                                     if (readOnly) {
                                       acompanhanteEscolhido = pessoa!.objectId!;
-                                      Navigator.of(context).pop();
+                                      Navigator.of(context)
+                                          .pop(acompanhanteEscolhido);
                                     } else {
                                       if (_formKey.currentState!.validate()) {
                                         pessoaController.salvarUsuario(

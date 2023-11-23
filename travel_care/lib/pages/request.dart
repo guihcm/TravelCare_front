@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:travel_care/controllers/cidade_controller.dart';
@@ -37,6 +39,8 @@ class _RequestPageState extends State<RequestPage> {
 
   Cidade? _cidade;
   Finalidade? _finalidade;
+
+  String? acompanhanteId;
 
   @override
   void initState() {
@@ -188,29 +192,20 @@ class _RequestPageState extends State<RequestPage> {
                                           fontSize: 18,
                                         )),
                                     onPressed: () {
-                                      //if (_formKey.currentState!.validate()) {
+                                      if (_formKey.currentState!.validate()) {
+                                        Pessoa? acompanhante = Pessoa()
+                                          ..objectId = acompanhanteId;
 
-                                      //********************* */
-
-                                      // Com acompanhante
-                                      Pessoa? acompanhante = Pessoa()
-                                        ..objectId = "HUfvmsGNZQ";
-
-                                      // Sem acompanhante
-                                      //Pessoa? acompanhante;
-
-                                      //********************* */
-
-                                      solicitacaoController.solicitar(
-                                        context,
-                                        _cidade,
-                                        _dataViagem,
-                                        controllerEndereco,
-                                        _finalidade,
-                                        _horaViagem,
-                                        acompanhante,
-                                      );
-                                      //}
+                                        solicitacaoController.solicitar(
+                                          context,
+                                          _cidade,
+                                          _dataViagem,
+                                          controllerEndereco,
+                                          _finalidade,
+                                          _horaViagem,
+                                          acompanhante,
+                                        );
+                                      }
                                     }),
                               ],
                             ))),
@@ -339,6 +334,9 @@ class _RequestPageState extends State<RequestPage> {
         context: context,
         builder: (BuildContext context) {
           return RequestNextDialog(cpf);
-        });
+        }).then((value) {
+      log("retorno: " + value.toString());
+      acompanhanteId = value;
+    });
   }
 }

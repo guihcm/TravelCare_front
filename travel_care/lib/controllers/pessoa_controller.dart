@@ -1,3 +1,4 @@
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
@@ -136,7 +137,8 @@ class PessoaController {
 
     ParseResponse response;
     if (controllerEmail == null) {
-      response = await pessoa.signUp(allowWithoutEmail: true);
+      response = await pessoa.signUp(
+          allowWithoutEmail: true, doNotSendInstallationID: true);
     } else {
       response = await pessoa.signUp();
     }
@@ -144,8 +146,8 @@ class PessoaController {
     if (!context.mounted) return false;
 
     if (response.success) {
-      pessoa.deleteLocalUserData();
       if (sexo != null && cidade != null) {
+        pessoa.deleteLocalUserData();
         showDialog(
             context: context,
             builder: (BuildContext context) {
@@ -163,7 +165,10 @@ class PessoaController {
             builder: (BuildContext context) {
               return MyDialog("Cadastro realizado com sucesso!",
                   () => Navigator.of(context).pop());
-            }).then((value) => Navigator.of(context).pop());
+            }).then((value) {
+          log("parametro: " + pessoa.objectId.toString());
+          Navigator.of(context).pop(pessoa.objectId);
+        });
 
         return true;
       }
