@@ -150,7 +150,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               },
                               onTap: () async {
                                 _dataNascimento = await handleDate(
-                                    context, controllerDataNascimento);
+                                    context, controllerDataNascimento, false);
                               },
                             ),
                             TextFormField(

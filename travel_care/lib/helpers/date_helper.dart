@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:travel_care/helpers/string_helper.dart';
 
-Future<DateTime> handleDate(BuildContext context, TextEditingController controller) async {
-  DateTime? picked = await selectDate(context);
+Future<DateTime> handleDate(BuildContext context,
+    TextEditingController controller, bool dataFutura) async {
+  DateTime? picked = await selectDate(context, dataFutura);
   DateTime date = DateTime.now();
   if (picked != null) {
     controller.text = picked.toString();
@@ -13,14 +14,14 @@ Future<DateTime> handleDate(BuildContext context, TextEditingController controll
 }
 
 Future<DateTime?> selectDate(
-  BuildContext context) async {
+  BuildContext context, bool dataFutura) async {
 
   return await showDatePicker(
       context: context,
       initialEntryMode: DatePickerEntryMode.calendarOnly,
       initialDate: DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now()); 
+      firstDate: dataFutura ? DateTime.now() : DateTime(1900),
+      lastDate: dataFutura ? DateTime(2100) : DateTime.now());
 }
 
 void formatControllerDate(TextEditingController controller) {

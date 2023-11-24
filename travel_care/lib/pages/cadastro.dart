@@ -133,7 +133,7 @@ class _CadastroPageState extends State<CadastroPage> {
                                   },
                                   onTap: () async {
                                     _dataNascimento = await handleDate(
-                                        context, controllerDataNascimento);
+                                        context, controllerDataNascimento, false);
                                   },
                                 ),
                                 TextFormField(

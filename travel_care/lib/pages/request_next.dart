@@ -142,7 +142,7 @@ class _RequestNextDialogState extends State<RequestNextDialog> {
                           onTap: () async {
                             if (readOnly == false) {
                               _dataNascimento = await handleDate(
-                                  context, controllerDataNascimento);
+                                  context, controllerDataNascimento, false);
                             }
                           },
                         ),
@@ -195,21 +195,14 @@ class _RequestNextDialogState extends State<RequestNextDialog> {
                                           .pop(acompanhanteEscolhido);
                                     } else {
                                       if (_formKey.currentState!.validate()) {
-                                        pessoaController.salvarUsuario(
-                                            context,
-                                            null,
-                                            null,
-                                            null,
-                                            null,
-                                            controllerNome,
-                                            controllerCPF,
-                                            controllerRG,
-                                            null,
-                                            _dataNascimento,
-                                            controllerTelefone,
-                                            null,
-                                            null,
-                                            null);
+                                        pessoaController.salvarAcompanhante(
+                                          context,
+                                          controllerNome,
+                                          controllerCPF,
+                                          controllerRG,
+                                          _dataNascimento,
+                                          controllerTelefone,
+                                        );
                                       }
                                     }
                                   },

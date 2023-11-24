@@ -51,6 +51,35 @@ Parse.Cloud.afterSave(Parse.User, async (request) => {
     }
 });
 
+// Cria novo acompanhante
+Parse.Cloud.define("salvarAcompanhante", async (request) => {
+  const { username, password, outrosCampos } = request.params;
+
+  const user = new Parse.User();
+  user.set('username', username);
+  user.set('password', password);
+
+  for (const campo in outrosCampos) {
+     if (campo === 'dataNascimento') {
+      const dataNascimento = new Date(outrosCampos[campo]);
+      user.set(campo, dataNascimento);
+    } else {
+      user.set(campo, outrosCampos[campo]);
+    }
+  }
+
+  user.setEmail(undefined);
+
+  try {
+    const newUser = await user.signUp(null, { useMasterKey: true });
+    return { objectId: newUser.id };
+    
+  } catch (error) {
+    return { error: error.message };
+  }
+});
+
+
 
 // Adicionar acompanhante na solicitação
 Parse.Cloud.define("updateSolicitacaoAcompanhante", async (request) => {

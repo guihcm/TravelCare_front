@@ -111,7 +111,7 @@ class _RequestPageState extends State<RequestPage> {
                                   },
                                   onTap: () async {
                                     _dataViagem = await handleDate(
-                                        context, controllerDataViagem);
+                                        context, controllerDataViagem, true);
                                   },
                                 ),
                                 const SizedBox(height: 40),
@@ -133,6 +133,9 @@ class _RequestPageState extends State<RequestPage> {
                                   decoration: const InputDecoration(
                                     labelText: "Finalidade",
                                   ),
+                                  validator: (value) {
+                                    return validateNotNull(value);
+                                  },
                                   hint: const Text("Informe a finalidade."),
                                   onChanged: (Finalidade? value) {
                                     setState(() {
@@ -162,6 +165,9 @@ class _RequestPageState extends State<RequestPage> {
                                     hintText: 'Selecione o horário de chegada.',
                                     suffixIcon: Icon(Icons.access_time),
                                   ),
+                                  validator: (text) {
+                                    return validateEmptyField(text);
+                                  },
                                 ),
                                 const SizedBox(height: 40),
                                 Row(

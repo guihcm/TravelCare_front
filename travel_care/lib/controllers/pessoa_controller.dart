@@ -79,7 +79,7 @@ class PessoaController {
     }
   }
 
-  Future<bool> salvarUsuario(
+  Future<void> salvarUsuario(
       BuildContext context,
       TextEditingController? controllerPassword,
       TextEditingController? controllerPasswordConfirmation,
@@ -94,31 +94,21 @@ class PessoaController {
       TextEditingController? controllerEndereco,
       Sexo? sexo,
       Cidade? cidade) async {
-    final String? password;
-    if (controllerPassword != null) {
-      password = controllerPassword.text.trim();
 
-      final passwordConfirmation = controllerPasswordConfirmation?.text.trim();
+    final String? password = controllerPassword?.text.trim();
 
-      if (password != passwordConfirmation) {
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return MyDialog(
-                  "Senhas diferentes.", () => Navigator.of(context).pop());
-            });
-        return false;
-      }
-    } else {
-      password = controllerCPF?.text;
+    final passwordConfirmation = controllerPasswordConfirmation?.text.trim();
+
+    if (password != passwordConfirmation) {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return MyDialog(
+                "Senhas diferentes.", () => Navigator.of(context).pop());
+          });
     }
 
-    String? username;
-    if (controllerUsername == null) {
-      username = controllerCPF?.text.trim();
-    } else {
-      username = controllerUsername.text.trim();
-    }
+    String? username = controllerUsername?.text.trim();
 
     final email = controllerEmail?.text.trim();
 
@@ -135,61 +125,69 @@ class PessoaController {
     pessoa.sexo = sexo;
     pessoa.cidade = cidade;
 
-    ParseResponse response;
-    if (controllerEmail == null) {
-      response = await pessoa.signUp(
-          allowWithoutEmail: true, doNotSendInstallationID: true);
-    } else {
-      response = await pessoa.signUp();
-    }
+    ParseResponse? response = await pessoa.signUp();
 
-    if (!context.mounted) return false;
+    if (!context.mounted) return;
 
     if (response.success) {
-      if (sexo != null && cidade != null) {
-        pessoa.deleteLocalUserData();
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return MyDialog(
-                  "Cadastro realizado com sucesso!",
-                  () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const LoginPage())));
-            });
-        return false;
-      } else {
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return MyDialog("Cadastro realizado com sucesso!",
-                  () => Navigator.of(context).pop());
-            }).then((value) {
-          log("parametro: " + pessoa.objectId.toString());
-          Navigator.of(context).pop(pessoa.objectId);
-        });
-
-        return true;
-      }
-    } else {
+      pessoa.deleteLocalUserData();
       showDialog(
           context: context,
           builder: (BuildContext context) {
             return MyDialog(
-                response.error!.message ==
-                        "Account already exists for this username."
-                    ? "O login escolhido já existe."
-                    : (response.error!.message ==
-                            "Email address format is invalid."
-                        ? "Formato inválido de e-mail."
-                        : (response.error!.message ==
-                                "Account already exists for this email address."
-                            ? "O e-mail informado já existe."
-                            : "Algo deu errado. Tente novamente.")),
-                () => Navigator.of(context).pop());
+                "Cadastro realizado com sucesso!",
+                () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const LoginPage())));
           });
-      return false;
+    } else {
+      _createUserErrorMessage(context, response);
+    }
+  }
+
+  Future<void> salvarAcompanhante(
+      BuildContext context,
+      TextEditingController? controllerNome,
+      TextEditingController? controllerCPF,
+      TextEditingController? controllerRG,
+      DateTime? dataNascimento,
+      TextEditingController? controllerTelefone) async {
+
+    final String? password = controllerCPF?.text;
+    final String? username = controllerCPF?.text.trim();
+
+    final nomeCompleto = controllerNome?.text.trim();
+    final cpf = controllerCPF?.text.trim();
+    final rg = controllerRG?.text.trim();
+    dataNascimento;
+    final telefone = controllerTelefone?.text.trim();
+
+    final response = await ParseCloudFunction('salvarAcompanhante').execute(parameters: {
+      'username': username,
+      'password': password,
+      'outrosCampos': {
+        'nomeCompleto': nomeCompleto,
+        'CPF': cpf,
+        'RG': rg,
+        'dataNascimento': dataNascimento.toString(),
+        'telefone': telefone,
+      },
+    });
+
+    if (!context.mounted) return;
+
+    if (response.success) {
+        showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return MyDialog("Cadastro de acompanhante realizado com sucesso!",
+                    () => Navigator.of(context).pop());
+              })
+          .then((value) => Navigator.of(context)
+              .pop(response.result['objectId'].toString()));
+    } else {
+      _createUserErrorMessage(context, response);
     }
   }
 
@@ -325,5 +323,24 @@ class PessoaController {
       return response.results!.first as Pessoa?;
     }
     return null;
+  }
+
+  void _createUserErrorMessage(BuildContext context, ParseResponse response) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return MyDialog(
+              response.error!.message ==
+                      "Account already exists for this username."
+                  ? "O login escolhido já existe."
+                  : (response.error!.message ==
+                          "Email address format is invalid."
+                      ? "Formato inválido de e-mail."
+                      : (response.error!.message ==
+                              "Account already exists for this email address."
+                          ? "O e-mail informado já existe."
+                          : "Algo deu errado. Tente novamente.")),
+              () => Navigator.of(context).pop());
+        });
   }
 }
