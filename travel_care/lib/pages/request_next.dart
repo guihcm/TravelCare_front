@@ -1,6 +1,7 @@
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:travel_care/controllers/pessoa_controller.dart';
 import 'package:travel_care/helpers/date_helper.dart';
 import 'package:travel_care/helpers/string_helper.dart';
@@ -110,7 +111,17 @@ class _RequestNextDialogState extends State<RequestNextDialog> {
                             CpfInputFormatter()
                           ],
                           validator: (text) {
-                            return validateEmptyField(text);
+                            if(validateEmptyField(text) == null){
+                              if(GetUtils.isCpf(controllerCPF.text)){
+                                return validateEmptyField(text);
+                              }
+                              else{
+                                return "* CPF Inválido";
+                              }
+                            }
+                            else{
+                              return validateEmptyField(text);
+                            }
                           },
                         ),
                         const SizedBox(height: 40),

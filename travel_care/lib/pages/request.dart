@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:travel_care/controllers/cidade_controller.dart';
 import 'package:travel_care/controllers/pessoa_controller.dart';
 import 'package:travel_care/controllers/solicitacao_controller.dart';
@@ -275,7 +276,7 @@ class _RequestPageState extends State<RequestPage> {
               ),
               TextButton(
                 onPressed: () {
-                  if (controllerCPF.text == "") {
+                  if (controllerCPF.text == "" || GetUtils.isCpf(controllerCPF.text) == false) {
                     Navigator.of(context).pop();
                     alert();
                   } else {
@@ -307,7 +308,7 @@ class _RequestPageState extends State<RequestPage> {
           child: Column(
             children: <Widget>[
               const Text(
-                'Digite um CPF',
+                'Digite um CPF válido',
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 24,

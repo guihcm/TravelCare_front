@@ -29,6 +29,7 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   brasil_fields: ^1.14.0
+  get: 
   parse_server_sdk_flutter: ^7.0.0
   flutter:
     sdk: flutter

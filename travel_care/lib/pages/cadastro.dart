@@ -7,6 +7,8 @@ import 'package:travel_care/models/cidade.dart';
 import 'package:travel_care/models/sexo.dart';
 import 'package:travel_care/helpers/validation_helper.dart';
 import 'package:travel_care/helpers/date_helper.dart';
+import 'package:get/get.dart';
+
 
 class CadastroPage extends StatefulWidget {
   const CadastroPage({super.key});
@@ -95,7 +97,17 @@ class _CadastroPageState extends State<CadastroPage> {
                                     CpfInputFormatter()
                                   ],
                                   validator: (text) {
-                                    return validateEmptyField(text);
+                                    if(validateEmptyField(text) == null){
+                                      if(GetUtils.isCpf(controllerCPF.text)){
+                                        return validateEmptyField(text);
+                                      }
+                                      else{
+                                        return "* CPF Inválido";
+                                      }
+                                    }
+                                    else{
+                                      return validateEmptyField(text);
+                                    }
                                   },
                                 ),
                                 TextFormField(

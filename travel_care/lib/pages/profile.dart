@@ -1,6 +1,7 @@
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:travel_care/controllers/cidade_controller.dart';
 import 'package:travel_care/controllers/pessoa_controller.dart';
 import 'package:travel_care/helpers/date_helper.dart';
@@ -112,7 +113,17 @@ class _ProfilePageState extends State<ProfilePage> {
                                 CpfInputFormatter()
                               ],
                               validator: (text) {
-                                return validateEmptyField(text);
+                                if(validateEmptyField(text) == null){
+                                  if(GetUtils.isCpf(controllerCPF.text)){
+                                    return validateEmptyField(text);
+                                  }
+                                  else{
+                                    return "* CPF Inválido";
+                                  }
+                                }
+                                else{
+                                  return validateEmptyField(text);
+                                }
                               },
                             ),
                             TextFormField(

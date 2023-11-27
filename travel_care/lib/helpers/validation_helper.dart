@@ -1,8 +1,10 @@
+
   
   String? validateEmptyField(text) {
-    if (text == null || text.isEmpty) {
-      return "* Campo obrigatório";
-    }
+     if (text == null || text.isEmpty) {
+       return "* Campo obrigatório";
+     }
+
     return null;
   }
 
@@ -12,3 +14,6 @@
     }
     return null;
   }
+
+
+  
