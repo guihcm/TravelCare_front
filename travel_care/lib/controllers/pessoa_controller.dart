@@ -9,6 +9,7 @@ import 'package:travel_care/models/sexo.dart';
 import 'package:travel_care/pages/complete.dart';
 import 'package:travel_care/pages/home.dart';
 import 'package:travel_care/pages/login.dart';
+import 'package:travel_care/pages/profile.dart';
 
 class PessoaController {
   Future<Pessoa?> loggedUser() async {
@@ -108,47 +109,48 @@ class PessoaController {
           context: context,
           builder: (BuildContext context) {
             return MyDialog(
-                "Senhas diferentes.", () => Navigator.of(context).pop());
+                "As senhas não conferem.", () => Navigator.of(context).pop());
           });
     }
+    else{
+      String? username = controllerCPF?.text.trim();
 
-    String? username = controllerCPF?.text.trim();
+      final email = controllerEmail?.text.trim();
 
-    final email = controllerEmail?.text.trim();
+      final pessoa =
+          Pessoa(username: username, password: password, emailAddress: email);
 
-    final pessoa =
-        Pessoa(username: username, password: password, emailAddress: email);
+      pessoa.nomeCompleto = controllerNome?.text.trim();
+      pessoa.cpf = controllerCPF?.text.trim();
+      pessoa.rg = controllerRG?.text.trim();
+      pessoa.cns = controllerCNS?.text.trim();
+      pessoa.dataNascimento = dataNascimento;
+      pessoa.telefone = controllerTelefone?.text.trim();
+      pessoa.endereco = controllerEndereco?.text.trim();
+      pessoa.sexo = sexo;
+      pessoa.cidade = cidade;
+      pessoa.cadastroCompleto = true;
 
-    pessoa.nomeCompleto = controllerNome?.text.trim();
-    pessoa.cpf = controllerCPF?.text.trim();
-    pessoa.rg = controllerRG?.text.trim();
-    pessoa.cns = controllerCNS?.text.trim();
-    pessoa.dataNascimento = dataNascimento;
-    pessoa.telefone = controllerTelefone?.text.trim();
-    pessoa.endereco = controllerEndereco?.text.trim();
-    pessoa.sexo = sexo;
-    pessoa.cidade = cidade;
-    pessoa.cadastroCompleto = true;
+      ParseResponse? response = await pessoa.signUp();
 
-    ParseResponse? response = await pessoa.signUp();
+      if (!context.mounted) return;
 
-    if (!context.mounted) return;
-
-    if (response.success) {
-      pessoa.deleteLocalUserData();
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return MyDialog(
-                "Cadastro realizado com sucesso!",
-                () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const LoginPage())));
-          });
-    } else {
-      _createUserErrorMessage(context, response);
-    }
+      if (response.success) {
+        pessoa.deleteLocalUserData();
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return MyDialog(
+                  "Cadastro realizado com sucesso!",
+                  () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const LoginPage())));
+            });
+      } else {
+        _createUserErrorMessage(context, response);
+      }
+      }
   }
 
   Future<void> salvarAcompanhante(
@@ -265,7 +267,7 @@ class PessoaController {
   }
 
   void recuperarSenha(
-      BuildContext context, TextEditingController controllerEmail) async {
+      BuildContext context, TextEditingController controllerEmail, bool edit) async {
     var email = controllerEmail.text.trim();
 
     var emailExiste = await _getByEmail(email);
@@ -284,11 +286,22 @@ class PessoaController {
             builder: (BuildContext context) {
               return MyDialog(
                   "E-mail enviado com sucesso.",
-                  () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const LoginPage())));
+                  () {
+                    if(edit){
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const LoginPage()));
+                    }
+                    else{
+                      Navigator.pop(context);
+                      Navigator.pop(context);                   
+                      }
+                    }
+                          );
             });
+
+
       } else {
         showDialog(
             context: context,

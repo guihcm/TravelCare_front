@@ -11,6 +11,7 @@ import 'package:travel_care/models/cidade.dart';
 import 'package:travel_care/models/pessoa.dart';
 import 'package:travel_care/models/sexo.dart';
 import 'package:travel_care/page_models/profile_model.dart';
+import 'package:travel_care/pages/password.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -240,7 +241,26 @@ class _ProfilePageState extends State<ProfilePage> {
                                 return validateEmptyField(text);
                               },
                             ),
-                            const SizedBox(height: 40),
+                            const SizedBox(height: 15),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                GestureDetector(
+                                  child: const Text(
+                                    'Redefinir senha',
+                                    style: TextStyle(
+                                      color: Colors.blue,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                  onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => PasswordPage(pessoa.emailAddress))),                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 15),
                             ElevatedButton(
                                 child: const Text('Salvar',
                                     style: TextStyle(

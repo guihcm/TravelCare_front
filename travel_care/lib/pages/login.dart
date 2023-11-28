@@ -1,4 +1,6 @@
+import 'package:brasil_fields/brasil_fields.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:travel_care/controllers/pessoa_controller.dart';
 import 'package:travel_care/pages/cadastro.dart';
 import 'package:travel_care/pages/password.dart';
@@ -56,6 +58,10 @@ class _CadastroPageState extends State<LoginPage> {
                     hintText: 'Digite seu login',
                     labelText: "Login",
                   ),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    CpfInputFormatter()
+                  ],
                   validator: (text) => validateEmptyField(text),
                 ),
                 const SizedBox(height: 20),
@@ -95,7 +101,7 @@ class _CadastroPageState extends State<LoginPage> {
                       onTap: () => Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const PasswordPage())),
+                              builder: (context) => PasswordPage(""))),
                     ),
                   ],
                 ),

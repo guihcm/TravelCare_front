@@ -3,7 +3,9 @@ import 'package:travel_care/controllers/pessoa_controller.dart';
 import 'package:travel_care/helpers/validation_helper.dart';
 
 class PasswordPage extends StatefulWidget {
-  const PasswordPage({super.key});
+  PasswordPage(this.email, {super.key});
+
+  String? email;
 
   @override
   State<PasswordPage> createState() => _PasswordPageState();
@@ -11,10 +13,18 @@ class PasswordPage extends StatefulWidget {
 
 class _PasswordPageState extends State<PasswordPage> {
   final _formKey = GlobalKey<FormState>();
-  final controllerEmail = TextEditingController();
 
   final pessoaController = PessoaController();
 
+  var controllerEmail = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    controllerEmail.text = widget.email ?? "";
+  }
+
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,8 +78,9 @@ class _PasswordPageState extends State<PasswordPage> {
                   const SizedBox(height: 30),
                   ElevatedButton(
                     onPressed: () {
+                      bool edit = controllerEmail.text == "" ? true : false;
                       if (_formKey.currentState!.validate()) {
-                        pessoaController.recuperarSenha(context, controllerEmail);
+                        pessoaController.recuperarSenha(context, controllerEmail, edit);
                       }
                     },
                     child: const Text(
