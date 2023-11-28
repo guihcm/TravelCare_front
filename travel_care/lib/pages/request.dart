@@ -413,9 +413,11 @@ class _RequestPageState extends State<RequestPage> {
         builder: (BuildContext context) {
           return RequestNextDialog(cpf);
         }).then((value) {
-      log("retorno: " + value[0].toString());
-      acompanhanteId = value[0];
-      nomeAcompanhante = value[1];
+      if(value != null){
+        log("retorno: " + value[0].toString());
+        acompanhanteId = value[0];
+        nomeAcompanhante = value[1];
+      }
     }).then((value) => reloadAcompanhante());
   }
   
