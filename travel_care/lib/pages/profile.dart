@@ -29,7 +29,6 @@ class _ProfilePageState extends State<ProfilePage> {
   final controllerDataNascimento = TextEditingController();
   final controllerTelefone = TextEditingController();
   final controllerEndereco = TextEditingController();
-  final controllerUsername = TextEditingController();
   final controllerPassword = TextEditingController();
   final controllerPasswordConfirmation = TextEditingController();
   final controllerEmail = TextEditingController();
@@ -80,7 +79,6 @@ class _ProfilePageState extends State<ProfilePage> {
               }
               controllerTelefone.text = pessoa.telefone ?? "";
               controllerEndereco.text = pessoa.endereco ?? "";
-              controllerUsername.text = pessoa.username ?? "";
               controllerEmail.text = pessoa.emailAddress ?? "";
 
               return Scaffold(
@@ -128,7 +126,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                             TextFormField(
                               controller: controllerRG,
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.text,
                               decoration: const InputDecoration(
                                 hintText: 'Digite seu RG',
                                 labelText: "RG",
@@ -182,6 +180,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             DropdownButtonFormField<Sexo>(
                               icon: const Icon(Icons.arrow_drop_down),
                               elevation: 16,
+                              validator: (sexo) => validateNotNull(sexo),
                               decoration: const InputDecoration(
                                 labelText: "Sexo",
                               ),
@@ -195,7 +194,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   .map<DropdownMenuItem<Sexo>>((Sexo value) {
                                 return DropdownMenuItem<Sexo>(
                                   value: value,
-                                  child: Text(value.name.toUpperCase()),
+                                  child: Text(value.name.toLowerCase()),
                                 );
                               }).toList(),
                             ),
@@ -241,17 +240,6 @@ class _ProfilePageState extends State<ProfilePage> {
                                 return validateEmptyField(text);
                               },
                             ),
-                            TextFormField(
-                              readOnly: true,
-                              controller: controllerUsername,
-                              decoration: const InputDecoration(
-                                hintText: 'Digite seu login',
-                                labelText: "Login",
-                              ),
-                              validator: (text) {
-                                return validateEmptyField(text);
-                              },
-                            ),
                             const SizedBox(height: 40),
                             ElevatedButton(
                                 child: const Text('Salvar',
@@ -262,7 +250,6 @@ class _ProfilePageState extends State<ProfilePage> {
                                   if (_formKey.currentState!.validate()) {
                                     pessoaController.editarUsuario(
                                         context,
-                                        controllerUsername,
                                         controllerEmail,
                                         controllerNome,
                                         controllerCPF,

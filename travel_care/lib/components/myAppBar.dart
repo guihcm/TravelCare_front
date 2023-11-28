@@ -30,16 +30,19 @@ class _MyAppBarState extends State<MyAppBar> {
                     child: CircularProgressIndicator()),
               );
             default:
+            var pessoa = snapshot.data;
               return AppBar(
                 automaticallyImplyLeading: false,
                 backgroundColor: Colors.blue,
                 title: Text(
-                  'Olá, ${getFirstName(snapshot.data?.nomeCompleto) ?? "Prezado Usário"}!',
+                  pessoa!.cadastroCompleto!
+                  ? 'Olá, ${getFirstName(pessoa.nomeCompleto) ?? "Prezado Usário"}!'
+                  : 'Complete seu cadastro',
                   style: const TextStyle(color: Colors.white),
                 ),
                 actions: [
                   IconButton(
-                      onPressed: () => pessoaController.logout(context),
+                      onPressed: () => logout(),
                       icon: const Icon(
                         Icons.logout,
                         color: Colors.white,
@@ -48,5 +51,57 @@ class _MyAppBarState extends State<MyAppBar> {
               );
           }
         });
+  }
+
+  logout() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        content: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              Center(
+                child: const Text(
+                  'Você realmente deseja sair?',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text(
+              'Não',
+              style: TextStyle(
+                color: Colors.blue,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () async {
+              await pessoaController.logout(context);
+            },
+            child: const Text(
+              'Sim',
+              style: TextStyle(
+                color: Colors.blue,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

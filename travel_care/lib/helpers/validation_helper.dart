@@ -8,8 +8,8 @@
     return null;
   }
 
-    String? validateNotNull(cidade) {
-    if (cidade == null) {
+    String? validateNotNull(object) {
+    if (object == null) {
       return "* Campo obrigatório";
     }
     return null;

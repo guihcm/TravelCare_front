@@ -6,6 +6,7 @@ import 'package:travel_care/components/myDialog.dart';
 import 'package:travel_care/models/cidade.dart';
 import 'package:travel_care/models/pessoa.dart';
 import 'package:travel_care/models/sexo.dart';
+import 'package:travel_care/pages/complete.dart';
 import 'package:travel_care/pages/home.dart';
 import 'package:travel_care/pages/login.dart';
 
@@ -38,10 +39,15 @@ class PessoaController {
     if (!context.mounted) return;
 
     if (response.success) {
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => const HomePage()),
-          (Route<dynamic> route) => false);
+      response.result['cadastroCompleto']
+          ? Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const HomePage()),
+              (Route<dynamic> route) => false)
+          : Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const CompletePage()),
+              (Route<dynamic> route) => false);
     } else {
       String message = response.error!.message == "Invalid username/password."
           ? "Login ou senha incorretos."
@@ -83,7 +89,6 @@ class PessoaController {
       BuildContext context,
       TextEditingController? controllerPassword,
       TextEditingController? controllerPasswordConfirmation,
-      TextEditingController? controllerUsername,
       TextEditingController? controllerEmail,
       TextEditingController? controllerNome,
       TextEditingController? controllerCPF,
@@ -94,7 +99,6 @@ class PessoaController {
       TextEditingController? controllerEndereco,
       Sexo? sexo,
       Cidade? cidade) async {
-
     final String? password = controllerPassword?.text.trim();
 
     final passwordConfirmation = controllerPasswordConfirmation?.text.trim();
@@ -108,7 +112,7 @@ class PessoaController {
           });
     }
 
-    String? username = controllerUsername?.text.trim();
+    String? username = controllerCPF?.text.trim();
 
     final email = controllerEmail?.text.trim();
 
@@ -124,6 +128,7 @@ class PessoaController {
     pessoa.endereco = controllerEndereco?.text.trim();
     pessoa.sexo = sexo;
     pessoa.cidade = cidade;
+    pessoa.cadastroCompleto = true;
 
     ParseResponse? response = await pessoa.signUp();
 
@@ -153,17 +158,16 @@ class PessoaController {
       TextEditingController? controllerRG,
       DateTime? dataNascimento,
       TextEditingController? controllerTelefone) async {
-
     final String? password = controllerCPF?.text;
     final String? username = controllerCPF?.text.trim();
 
     final nomeCompleto = controllerNome?.text.trim();
     final cpf = controllerCPF?.text.trim();
     final rg = controllerRG?.text.trim();
-    dataNascimento;
     final telefone = controllerTelefone?.text.trim();
 
-    final response = await ParseCloudFunction('salvarAcompanhante').execute(parameters: {
+    final response =
+        await ParseCloudFunction('salvarAcompanhante').execute(parameters: {
       'username': username,
       'password': password,
       'outrosCampos': {
@@ -172,20 +176,22 @@ class PessoaController {
         'RG': rg,
         'dataNascimento': dataNascimento.toString(),
         'telefone': telefone,
+        'cadastroCompleto': false,
       },
     });
 
     if (!context.mounted) return;
 
     if (response.success) {
-        showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return MyDialog("Cadastro de acompanhante realizado com sucesso!",
-                    () => Navigator.of(context).pop());
-              })
-          .then((value) => Navigator.of(context)
-              .pop(response.result['objectId'].toString()));
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return MyDialog("Cadastro de acompanhante realizado com sucesso!",
+                () => Navigator.of(context).pop());
+          }).then((value) => Navigator.of(context).pop([
+            response.result['objectId'].toString(),
+            response.result['nomeAcompanhante'].toString()
+          ]));
     } else {
       _createUserErrorMessage(context, response);
     }
@@ -193,7 +199,6 @@ class PessoaController {
 
   void editarUsuario(
       BuildContext context,
-      TextEditingController controllerUsername,
       TextEditingController controllerEmail,
       TextEditingController controllerNome,
       TextEditingController controllerCPF,
@@ -206,7 +211,9 @@ class PessoaController {
       Cidade? cidade) async {
     final pessoa = await loggedUser();
 
-    pessoa!.username = controllerUsername.text.trim();
+    final bool? cadastroCompleto = pessoa?.cadastroCompleto;
+
+    pessoa!.username = controllerCPF.text.trim();
     pessoa.emailAddress = controllerEmail.text.trim();
     pessoa.nomeCompleto = controllerNome.text.trim();
     pessoa.cpf = controllerCPF.text.trim();
@@ -217,6 +224,7 @@ class PessoaController {
     pessoa.endereco = controllerEndereco.text.trim();
     pessoa.sexo = sexo ?? pessoa.sexo;
     pessoa.cidade = cidade;
+    pessoa.cadastroCompleto = true;
 
     var response = await pessoa.save();
 
@@ -228,7 +236,13 @@ class PessoaController {
           context: context,
           builder: (BuildContext context) {
             return MyDialog(
-                "Dados atualizados com sucesso!", () => Navigator.pop(context));
+                "Dados atualizados com sucesso!",
+                cadastroCompleto!
+                    ? () => Navigator.pop(context)
+                    : () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const HomePage())));
           });
     } else {
       showDialog(
@@ -237,7 +251,7 @@ class PessoaController {
             return MyDialog(
                 response.error!.message ==
                         "Account already exists for this username."
-                    ? "O login escolhido já existe."
+                    ? "O CPF informado já existe."
                     : (response.error!.message ==
                             "Email address format is invalid."
                         ? "Formato inválido de e-mail."
@@ -254,33 +268,46 @@ class PessoaController {
       BuildContext context, TextEditingController controllerEmail) async {
     var email = controllerEmail.text.trim();
 
-    // consultar se email existe
-    ParseUser user = ParseUser(null, null, email);
-    var response = await user.requestPasswordReset();
+    var emailExiste = await _getByEmail(email);
 
-    if (!context.mounted) {
-      return;
-    }
+    if (emailExiste) {
+      ParseUser user = ParseUser(null, null, email);
+      var response = await user.requestPasswordReset();
 
-    if (response.success) {
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return MyDialog(
-                "E-mail enviado com sucesso.",
-                () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const LoginPage())));
-          });
+      if (!context.mounted) {
+        return;
+      }
+
+      if (response.success) {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return MyDialog(
+                  "E-mail enviado com sucesso.",
+                  () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const LoginPage())));
+            });
+      } else {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return MyDialog("Falha ao enviar email de redefinição de senha.",
+                  () => Navigator.of(context).pop());
+            });
+      }
     } else {
       showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return MyDialog("Falha ao enviar email de redefinição de senha",
-                () => Navigator.of(context).pop());
-          });
+            context: context,
+            builder: (BuildContext context) {
+              return MyDialog("Usuário não encontrado.",
+                  () => Navigator.of(context).pop());
+            });
     }
+
+
+    
   }
 
   Future<Pessoa?> getPessoa(String? pessoaId) async {
@@ -332,7 +359,7 @@ class PessoaController {
           return MyDialog(
               response.error!.message ==
                       "Account already exists for this username."
-                  ? "O login escolhido já existe."
+                  ? "O CPF informado já existe. Se for o seu primeiro acesso tente entrar com CPF como login e senha."
                   : (response.error!.message ==
                           "Email address format is invalid."
                       ? "Formato inválido de e-mail."
@@ -342,5 +369,17 @@ class PessoaController {
                           : "Algo deu errado. Tente novamente.")),
               () => Navigator.of(context).pop());
         });
+  }
+  
+  Future<bool> _getByEmail(String email) async {
+    final queryBuilder = QueryBuilder<Pessoa>(Pessoa())
+      ..whereEqualTo('email', email);
+
+    final response = await queryBuilder.query();
+
+    if (response.success && response.results != null) {
+      return true;
+    }
+    return false;
   }
 }

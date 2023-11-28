@@ -72,8 +72,8 @@ Parse.Cloud.define("salvarAcompanhante", async (request) => {
 
   try {
     const newUser = await user.signUp(null, { useMasterKey: true });
-    return { objectId: newUser.id };
-    
+    return { objectId: newUser.id, nomeAcompanhante: newUser.get('nomeCompleto') };
+
   } catch (error) {
     return { error: error.message };
   }

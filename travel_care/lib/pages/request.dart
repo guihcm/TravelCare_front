@@ -23,12 +23,9 @@ class RequestPage extends StatefulWidget {
 
 class _RequestPageState extends State<RequestPage> {
   final _formKey = GlobalKey<FormState>();
-  final GlobalKey<ScaffoldState> _acompanhanteKey = GlobalKey<ScaffoldState>();
 
   final controllerDataViagem = TextEditingController();
   final controllerHoraViagem = TextEditingController();
-
-  Pessoa? p;
 
   final solicitacaoController = SolicitacaoController();
 
@@ -46,12 +43,15 @@ class _RequestPageState extends State<RequestPage> {
 
   String? acompanhanteId;
 
-  Row ajax = Row();
+  late Widget ajax;
+
+  String? nomeAcompanhante;
 
   @override
   void initState() {
     super.initState();
     cidadeList = getCidades();
+    reloadAcompanhante();
   }
 
   @override
@@ -176,28 +176,7 @@ class _RequestPageState extends State<RequestPage> {
                                   },
                                 ),
                                 const SizedBox(height: 40),
-                                ajax = Row(
-                                  key: _acompanhanteKey,
-                                  children: [
-                                    Text('Possui um acompanhante? ',
-                                        style: TextStyle(
-                                          color: Colors.grey[700],
-                                          fontSize: 18,
-                                        )),
-                                    const SizedBox(width: 3),
-                                    GestureDetector(
-                                      child: const Text(
-                                        'Informe aqui.',
-                                        style: TextStyle(
-                                          color: Colors.blue,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18,
-                                        ),
-                                      ),
-                                      onTap: () => acompanhante(),
-                                    ),
-                                  ],
-                                ),
+                                ajax,
                                 const SizedBox(height: 40),
                                 ElevatedButton(
                                     child: const Text('Salvar',
@@ -206,7 +185,8 @@ class _RequestPageState extends State<RequestPage> {
                                         )),
                                     onPressed: () {
                                       if (_formKey.currentState!.validate()) {
-                                        p = Pessoa()..objectId = acompanhanteId;
+                                        Pessoa? acompanhante = Pessoa()
+                                          ..objectId = acompanhanteId;
 
                                         solicitacaoController.solicitar(
                                           context,
@@ -215,7 +195,7 @@ class _RequestPageState extends State<RequestPage> {
                                           controllerEndereco,
                                           _finalidade,
                                           _horaViagem,
-                                          p,
+                                          acompanhante,
                                         );
                                       }
                                     }),
@@ -229,10 +209,36 @@ class _RequestPageState extends State<RequestPage> {
   void reloadAcompanhante() {
     if (acompanhanteId != null) {
       setState(() {
-        ajax = Row(
-          key: _acompanhanteKey,
+        ajax = Column(
           children: [
-            Text('deu certo ',
+            Row(
+              children: [
+                Text('Acompanhante: ',
+                    style: TextStyle(
+                      color: Colors.grey[700],
+                      fontSize: 18,
+                    )),
+                const SizedBox(width: 3),
+                GestureDetector(
+                  child: Text(
+                    nomeAcompanhante ?? "",
+                    style: TextStyle(
+                      color: Colors.blue,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
+                  onTap: () {
+                    acompanhanteId = null;
+                    reloadAcompanhante();
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 5),
+            Row(
+          children: [
+            Text('Remover acompanhante?',
                 style: TextStyle(
                   color: Colors.grey[700],
                   fontSize: 18,
@@ -240,7 +246,33 @@ class _RequestPageState extends State<RequestPage> {
             const SizedBox(width: 3),
             GestureDetector(
               child: const Text(
-                'aeeeee.',
+                'Clique aqui.',
+                style: TextStyle(
+                  color: Colors.blue,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+              onTap: () => removerAcompanhante(),
+            ),
+          ],
+        ),
+          ],
+        );
+      });
+    } else {
+      setState(() {
+        ajax = Row(
+          children: [
+            Text('Possui um acompanhante? ',
+                style: TextStyle(
+                  color: Colors.grey[700],
+                  fontSize: 18,
+                )),
+            const SizedBox(width: 3),
+            GestureDetector(
+              child: const Text(
+                'Informe aqui.',
                 style: TextStyle(
                   color: Colors.blue,
                   fontWeight: FontWeight.bold,
@@ -309,11 +341,15 @@ class _RequestPageState extends State<RequestPage> {
                 ),
               ),
               TextButton(
-                onPressed: () {
+                onPressed: () async {
+                  final usuario = await pessoaController.loggedUser();
                   if (controllerCPF.text == "" ||
                       GetUtils.isCpf(controllerCPF.text) == false) {
                     Navigator.of(context).pop();
-                    alert();
+                    alert('Digite um CPF válido!');
+                  } else if(controllerCPF.text == usuario?.cpf){
+                    Navigator.of(context).pop();
+                    alert('Você não pode ser seu próprio acompanhante!');
                   } else {
                     Navigator.of(context).pop();
                     next(controllerCPF.text);
@@ -335,15 +371,15 @@ class _RequestPageState extends State<RequestPage> {
     );
   }
 
-  alert() {
+  alert(texto) {
     showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
         content: SingleChildScrollView(
           child: Column(
             children: <Widget>[
-              const Text(
-                'Digite um CPF válido',
+              Text(
+                texto,
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 24,
@@ -377,8 +413,63 @@ class _RequestPageState extends State<RequestPage> {
         builder: (BuildContext context) {
           return RequestNextDialog(cpf);
         }).then((value) {
-      log("retorno: " + value.toString());
-      acompanhanteId = value;
+      log("retorno: " + value[0].toString());
+      acompanhanteId = value[0];
+      nomeAcompanhante = value[1];
     }).then((value) => reloadAcompanhante());
+  }
+  
+  removerAcompanhante() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        content: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              Center(
+                child: const Text(
+                  'Você tem certeza de que deseja remover o acompanhante informado?',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text(
+                  'Não',
+                  style: TextStyle(
+                    color: Colors.blue,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  acompanhanteId = null;
+                  reloadAcompanhante();
+                  Navigator.of(context).pop();
+                },
+                child: const Text(
+                  'Sim',
+                  style: TextStyle(
+                    color: Colors.blue,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+      ),
+    );
   }
 }

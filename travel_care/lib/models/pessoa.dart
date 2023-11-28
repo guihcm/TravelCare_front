@@ -20,6 +20,8 @@ class Pessoa extends ParseUser implements ParseCloneable {
   static const String keySexo = 'sexo';
   static const String keyEndereco = 'endereco';
   static const String keyCidade = 'cidadeId';
+  static const String keyCadastroCompleto = 'cadastroCompleto';
+
 
   factory Pessoa.fromParseUser(ParseUser? user) {
     return Pessoa()
@@ -36,7 +38,8 @@ class Pessoa extends ParseUser implements ParseCloneable {
             ? Sexo.values[user?[keySexo]] 
             : null
       ..endereco = user?[keyEndereco]
-      ..cidade = Cidade.fromParseObject(user?[keyCidade]);
+      ..cidade = Cidade.fromParseObject(user?[keyCidade])
+      ..cadastroCompleto = user?[keyCadastroCompleto];
   }
 
   String? get nomeCompleto => get<String>(keyNomeCompleto);
@@ -71,4 +74,7 @@ class Pessoa extends ParseUser implements ParseCloneable {
 
   Cidade? get cidade => get<Cidade>(keyCidade);
   set cidade(Cidade? cidade) => set<Cidade?>(keyCidade, cidade);
+
+  bool? get cadastroCompleto => get<bool>(keyCadastroCompleto);
+  set cadastroCompleto(bool? cadastroCompleto) => set<bool?>(keyCadastroCompleto, cadastroCompleto);
 }

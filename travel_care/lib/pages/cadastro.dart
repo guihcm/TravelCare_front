@@ -27,7 +27,6 @@ class _CadastroPageState extends State<CadastroPage> {
   final controllerDataNascimento = TextEditingController();
   final controllerTelefone = TextEditingController();
   final controllerEndereco = TextEditingController();
-  final controllerUsername = TextEditingController();
   final controllerPassword = TextEditingController();
   final controllerPasswordConfirmation = TextEditingController();
   final controllerEmail = TextEditingController();
@@ -112,7 +111,7 @@ class _CadastroPageState extends State<CadastroPage> {
                                 ),
                                 TextFormField(
                                   controller: controllerRG,
-                                  keyboardType: TextInputType.number,
+                                  keyboardType: TextInputType.text,
                                   decoration: const InputDecoration(
                                     hintText: 'Digite seu RG',
                                     labelText: "RG",
@@ -166,7 +165,7 @@ class _CadastroPageState extends State<CadastroPage> {
                                 DropdownButtonFormField<Sexo>(
                                   icon: const Icon(Icons.arrow_drop_down),
                                   elevation: 16,
-                                  //validator: (sexo) => validateNotNull(sexo),
+                                  validator: (sexo) => validateNotNull(sexo),
                                   decoration: const InputDecoration(
                                     labelText: "Sexo",
                                   ),
@@ -180,7 +179,7 @@ class _CadastroPageState extends State<CadastroPage> {
                                           (Sexo value) {
                                     return DropdownMenuItem<Sexo>(
                                       value: value,
-                                      child: Text(value.name.toUpperCase()),
+                                      child: Text(value.name.toLowerCase()),
                                     );
                                   }).toList(),
                                 ),
@@ -227,16 +226,6 @@ class _CadastroPageState extends State<CadastroPage> {
                                   },
                                 ),
                                 TextFormField(
-                                  controller: controllerUsername,
-                                  decoration: const InputDecoration(
-                                    hintText: 'Digite seu login',
-                                    labelText: "Login",
-                                  ),
-                                  validator: (text) {
-                                    return validateEmptyField(text);
-                                  },
-                                ),
-                                TextFormField(
                                   controller: controllerPassword,
                                   obscureText: true,
                                   decoration: const InputDecoration(
@@ -270,7 +259,6 @@ class _CadastroPageState extends State<CadastroPage> {
                                             context,
                                             controllerPassword,
                                             controllerPasswordConfirmation,
-                                            controllerUsername,
                                             controllerEmail,
                                             controllerNome,
                                             controllerCPF,

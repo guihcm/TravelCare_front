@@ -41,6 +41,8 @@ class _RequestInfoDialogState extends State<RequestInfoDialog> {
             );
           default:
             final solicitacao = snapshot.data;
+            solicitacao?.horaEvento =
+                solicitacao.horaEvento?.subtract(Duration(hours: 3));
             return AlertDialog(
               insetPadding: const EdgeInsets.all(10),
               content: SizedBox(
