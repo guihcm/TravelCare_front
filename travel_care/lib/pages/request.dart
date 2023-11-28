@@ -23,9 +23,12 @@ class RequestPage extends StatefulWidget {
 
 class _RequestPageState extends State<RequestPage> {
   final _formKey = GlobalKey<FormState>();
+  final GlobalKey<ScaffoldState> _acompanhanteKey = GlobalKey<ScaffoldState>();
 
   final controllerDataViagem = TextEditingController();
   final controllerHoraViagem = TextEditingController();
+
+  Pessoa? p;
 
   final solicitacaoController = SolicitacaoController();
 
@@ -42,6 +45,8 @@ class _RequestPageState extends State<RequestPage> {
   Finalidade? _finalidade;
 
   String? acompanhanteId;
+
+  Row ajax = Row();
 
   @override
   void initState() {
@@ -171,7 +176,8 @@ class _RequestPageState extends State<RequestPage> {
                                   },
                                 ),
                                 const SizedBox(height: 40),
-                                Row(
+                                ajax = Row(
+                                  key: _acompanhanteKey,
                                   children: [
                                     Text('Possui um acompanhante? ',
                                         style: TextStyle(
@@ -200,8 +206,7 @@ class _RequestPageState extends State<RequestPage> {
                                         )),
                                     onPressed: () {
                                       if (_formKey.currentState!.validate()) {
-                                        Pessoa? acompanhante = Pessoa()
-                                          ..objectId = acompanhanteId;
+                                        p = Pessoa()..objectId = acompanhanteId;
 
                                         solicitacaoController.solicitar(
                                           context,
@@ -210,7 +215,7 @@ class _RequestPageState extends State<RequestPage> {
                                           controllerEndereco,
                                           _finalidade,
                                           _horaViagem,
-                                          acompanhante,
+                                          p,
                                         );
                                       }
                                     }),
@@ -219,6 +224,35 @@ class _RequestPageState extends State<RequestPage> {
                   ));
           }
         });
+  }
+
+  void reloadAcompanhante() {
+    if (acompanhanteId != null) {
+      setState(() {
+        ajax = Row(
+          key: _acompanhanteKey,
+          children: [
+            Text('deu certo ',
+                style: TextStyle(
+                  color: Colors.grey[700],
+                  fontSize: 18,
+                )),
+            const SizedBox(width: 3),
+            GestureDetector(
+              child: const Text(
+                'aeeeee.',
+                style: TextStyle(
+                  color: Colors.blue,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+              onTap: () => acompanhante(),
+            ),
+          ],
+        );
+      });
+    }
   }
 
   Future<List<Cidade>?> getCidades() async {
@@ -276,7 +310,8 @@ class _RequestPageState extends State<RequestPage> {
               ),
               TextButton(
                 onPressed: () {
-                  if (controllerCPF.text == "" || GetUtils.isCpf(controllerCPF.text) == false) {
+                  if (controllerCPF.text == "" ||
+                      GetUtils.isCpf(controllerCPF.text) == false) {
                     Navigator.of(context).pop();
                     alert();
                   } else {
@@ -344,6 +379,6 @@ class _RequestPageState extends State<RequestPage> {
         }).then((value) {
       log("retorno: " + value.toString());
       acompanhanteId = value;
-    });
+    }).then((value) => reloadAcompanhante());
   }
 }
