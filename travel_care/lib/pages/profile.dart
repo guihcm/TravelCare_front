@@ -34,6 +34,8 @@ class _ProfilePageState extends State<ProfilePage> {
   final controllerPasswordConfirmation = TextEditingController();
   final controllerEmail = TextEditingController();
 
+  late Widget completo;
+
   DateTime? _dataNascimento;
 
   late Future<ProfileModel> profileModel;
@@ -74,18 +76,45 @@ class _ProfilePageState extends State<ProfilePage> {
               controllerCPF.text = pessoa.cpf ?? "";
               controllerRG.text = pessoa.rg ?? "";
               controllerCNS.text = pessoa.cns ?? "";
-              if(pessoa.dataNascimento != null){
-                controllerDataNascimento.text = 
-                   formatDateString(pessoa.dataNascimento.toString());
+              if (pessoa.dataNascimento != null) {
+                controllerDataNascimento.text =
+                    formatDateString(pessoa.dataNascimento.toString());
               }
               controllerTelefone.text = pessoa.telefone ?? "";
               controllerEndereco.text = pessoa.endereco ?? "";
               controllerEmail.text = pessoa.emailAddress ?? "";
 
+              if (pessoa.cadastroCompleto == true) {
+                completo = Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    GestureDetector(
+                      child: const Text(
+                        'Redefinir senha',
+                        style: TextStyle(
+                          color: Colors.blue,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                      onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  PasswordPage(pessoa.emailAddress))),
+                    ),
+                  ],
+                );
+              } else {
+                completo = const SizedBox(
+                  height: 0,
+                );
+              }
+
               return Scaffold(
                   body: SingleChildScrollView(
                 child: Padding(
-                    padding: const EdgeInsets.all(30.0),
+                    padding: const EdgeInsets.only(left: 30.0, right: 30),
                     child: Form(
                         key: _formKey,
                         child: Column(
@@ -112,15 +141,13 @@ class _ProfilePageState extends State<ProfilePage> {
                                 CpfInputFormatter()
                               ],
                               validator: (text) {
-                                if(validateEmptyField(text) == null){
-                                  if(GetUtils.isCpf(controllerCPF.text)){
+                                if (validateEmptyField(text) == null) {
+                                  if (GetUtils.isCpf(controllerCPF.text)) {
                                     return validateEmptyField(text);
-                                  }
-                                  else{
+                                  } else {
                                     return "* CPF Inválido";
                                   }
-                                }
-                                else{
+                                } else {
                                   return validateEmptyField(text);
                                 }
                               },
@@ -219,7 +246,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               ),
                               hint: const Text("Selecione sua cidade"),
                               onChanged: (Cidade? value) {
-                                  _cidade = value!;
+                                _cidade = value!;
                               },
                               value: _cidade,
                               items: cidades!.map<DropdownMenuItem<Cidade>>(
@@ -242,24 +269,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               },
                             ),
                             const SizedBox(height: 15),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                GestureDetector(
-                                  child: const Text(
-                                    'Redefinir senha',
-                                    style: TextStyle(
-                                      color: Colors.blue,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18,
-                                    ),
-                                  ),
-                                  onTap: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => PasswordPage(pessoa.emailAddress))),                                ),
-                              ],
-                            ),
+                            completo,
                             const SizedBox(height: 15),
                             ElevatedButton(
                                 child: const Text('Salvar',

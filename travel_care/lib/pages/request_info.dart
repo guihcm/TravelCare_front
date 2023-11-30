@@ -41,181 +41,187 @@ class _RequestInfoDialogState extends State<RequestInfoDialog> {
             );
           default:
             final solicitacao = snapshot.data;
-            solicitacao?.horaEvento =
-                solicitacao.horaEvento?.subtract(Duration(hours: 3));
+            //solicitacao?.horaEvento =
+            //solicitacao.horaEvento?.subtract(Duration(hours: 3));
             return AlertDialog(
               insetPadding: const EdgeInsets.all(10),
               content: SizedBox(
                 width: MediaQuery.of(context).size.width * 0.8,
                 child: Column(
                   children: <Widget>[
-                    Row(
+                    Flex(
+                      direction: Axis.vertical,
                       children: [
-                        const Text(
-                          'Paciente: ',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        Row(
+                          children: [
+                            const Text(
+                              'Paciente: ',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              solicitacao?.paciente?.nomeCompleto ?? "",
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                              ),
+                            ),
+                          ],
                         ),
-                        Text(
-                          solicitacao?.paciente?.nomeCompleto ?? "",
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                          ),
+                        const SizedBox(height: 10),
+                        Row(
+                          children: [
+                            const Text(
+                              'Acompanhante: ',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              solicitacao?.acompanhante?.nomeCompleto ?? "Não",
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                              ),
+                            ),
+                          ],
                         ),
+                        const SizedBox(height: 10),
+                        Row(
+                          children: [
+                            const Text(
+                              'Destino: ',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              solicitacao?.destino?.nome ?? "",
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          children: [
+                            const Text(
+                              'Data: ',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              formatDateString(
+                                      solicitacao!.dataViagem.toString()) ??
+                                  "",
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          children: [
+                            const Text(
+                              'Finalidade: ',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              solicitacao.finalidade?.name ?? "",
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          children: [
+                            const Text(
+                              'Horário de Chegada: ',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              formatHourString(
+                                  solicitacao.horaEvento.toString()),
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 25),
+                        const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Situação: ',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        switch (solicitacao.situacao!) {
+                          Situacao.aceita => ClipRRect(
+                              child: Image.asset(
+                                'assets/images/aprovada.png',
+                                height: 200,
+                              ),
+                            ),
+                          Situacao.pendente => ClipRRect(
+                              child: Image.asset(
+                                'assets/images/analise.png',
+                                height: 200,
+                              ),
+                            ),
+                          Situacao.recusada => ClipRRect(
+                              child: Image.asset(
+                                'assets/images/recusada.png',
+                                height: 200,
+                              ),
+                            ),
+                        },
+                        const SizedBox(height: 25),
+                        Center(
+                            child: ElevatedButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: const Text(
+                            "Voltar",
+                            style: TextStyle(
+                              fontSize: 20,
+                            ),
+                          ),
+                        ))
                       ],
                     ),
-                    const SizedBox(height: 10),
-                    Row(
-                      children: [
-                        const Text(
-                          'Acompanhante: ',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          solicitacao?.acompanhante?.nomeCompleto ?? "Não",
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
-                      children: [
-                        const Text(
-                          'Destino: ',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          solicitacao?.destino?.nome ?? "",
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
-                      children: [
-                        const Text(
-                          'Data: ',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          formatDateString(
-                                  solicitacao!.dataViagem.toString()) ??
-                              "",
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
-                      children: [
-                        const Text(
-                          'Finalidade: ',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          solicitacao.finalidade?.name ?? "",
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
-                      children: [
-                        const Text(
-                          'Horário de Chegada: ',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          formatHourString(solicitacao.horaEvento.toString()),
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 25),
-                    const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Situação: ',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    switch (solicitacao.situacao!) {
-                      Situacao.aceita => ClipRRect(
-                          child: Image.asset(
-                            'assets/images/aprovada.png',
-                            height: 200,
-                          ),
-                        ),
-                      Situacao.pendente => ClipRRect(
-                          child: Image.asset(
-                            'assets/images/analise.png',
-                            height: 200,
-                          ),
-                        ),
-                      Situacao.recusada => ClipRRect(
-                          child: Image.asset(
-                            'assets/images/recusada.png',
-                            height: 200,
-                          ),
-                        ),
-                    },
-                    const SizedBox(height: 25),
-                    Center(
-                        child: ElevatedButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      child: const Text(
-                        "Voltar",
-                        style: TextStyle(
-                          fontSize: 20,
-                        ),
-                      ),
-                    ))
                   ],
                 ),
               ),

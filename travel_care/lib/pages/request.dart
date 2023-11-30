@@ -209,77 +209,87 @@ class _RequestPageState extends State<RequestPage> {
   void reloadAcompanhante() {
     if (acompanhanteId != null) {
       setState(() {
-        ajax = Column(
+        ajax = Flex(
+          direction: Axis.vertical,
+          children: [
+            Column(
+              children: [
+                Row(
+                  children: [
+                    Text('Acompanhante: ',
+                        style: TextStyle(
+                          color: Colors.grey[700],
+                          fontSize: 18,
+                        )),
+                    const SizedBox(width: 3),
+                    GestureDetector(
+                      child: Text(
+                        nomeAcompanhante ?? "",
+                        style: TextStyle(
+                          color: Colors.blue,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                      onTap: () {
+                        acompanhanteId = null;
+                        reloadAcompanhante();
+                      },
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 5),
+                Row(
+                  children: [
+                    Text('Remover acompanhante?',
+                        style: TextStyle(
+                          color: Colors.grey[700],
+                          fontSize: 18,
+                        )),
+                    const SizedBox(width: 3),
+                    GestureDetector(
+                      child: const Text(
+                        'Clique aqui.',
+                        style: TextStyle(
+                          color: Colors.blue,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                      onTap: () => removerAcompanhante(),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        );
+      });
+    } else {
+      setState(() {
+        ajax = Flex(
+          direction: Axis.vertical,
           children: [
             Row(
               children: [
-                Text('Acompanhante: ',
+                Text('Possui um acompanhante? ',
                     style: TextStyle(
                       color: Colors.grey[700],
                       fontSize: 18,
                     )),
                 const SizedBox(width: 3),
                 GestureDetector(
-                  child: Text(
-                    nomeAcompanhante ?? "",
+                  child: const Text(
+                    'Informe aqui.',
                     style: TextStyle(
                       color: Colors.blue,
                       fontWeight: FontWeight.bold,
                       fontSize: 18,
                     ),
                   ),
-                  onTap: () {
-                    acompanhanteId = null;
-                    reloadAcompanhante();
-                  },
+                  onTap: () => acompanhante(),
                 ),
               ],
-            ),
-            const SizedBox(height: 5),
-            Row(
-          children: [
-            Text('Remover acompanhante?',
-                style: TextStyle(
-                  color: Colors.grey[700],
-                  fontSize: 18,
-                )),
-            const SizedBox(width: 3),
-            GestureDetector(
-              child: const Text(
-                'Clique aqui.',
-                style: TextStyle(
-                  color: Colors.blue,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
-              ),
-              onTap: () => removerAcompanhante(),
-            ),
-          ],
-        ),
-          ],
-        );
-      });
-    } else {
-      setState(() {
-        ajax = Row(
-          children: [
-            Text('Possui um acompanhante? ',
-                style: TextStyle(
-                  color: Colors.grey[700],
-                  fontSize: 18,
-                )),
-            const SizedBox(width: 3),
-            GestureDetector(
-              child: const Text(
-                'Informe aqui.',
-                style: TextStyle(
-                  color: Colors.blue,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
-              ),
-              onTap: () => acompanhante(),
             ),
           ],
         );
@@ -347,7 +357,7 @@ class _RequestPageState extends State<RequestPage> {
                       GetUtils.isCpf(controllerCPF.text) == false) {
                     Navigator.of(context).pop();
                     alert('Digite um CPF válido!');
-                  } else if(controllerCPF.text == usuario?.cpf){
+                  } else if (controllerCPF.text == usuario?.cpf) {
                     Navigator.of(context).pop();
                     alert('Você não pode ser seu próprio acompanhante!');
                   } else {
@@ -413,14 +423,14 @@ class _RequestPageState extends State<RequestPage> {
         builder: (BuildContext context) {
           return RequestNextDialog(cpf);
         }).then((value) {
-      if(value != null){
+      if (value != null) {
         log("retorno: " + value[0].toString());
         acompanhanteId = value[0];
         nomeAcompanhante = value[1];
       }
     }).then((value) => reloadAcompanhante());
   }
-  
+
   removerAcompanhante() {
     showDialog(
       context: context,
@@ -442,35 +452,35 @@ class _RequestPageState extends State<RequestPage> {
           ),
         ),
         actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text(
-                  'Não',
-                  style: TextStyle(
-                    color: Colors.blue,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text(
+              'Não',
+              style: TextStyle(
+                color: Colors.blue,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
               ),
-              TextButton(
-                onPressed: () {
-                  acompanhanteId = null;
-                  reloadAcompanhante();
-                  Navigator.of(context).pop();
-                },
-                child: const Text(
-                  'Sim',
-                  style: TextStyle(
-                    color: Colors.blue,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              acompanhanteId = null;
+              reloadAcompanhante();
+              Navigator.of(context).pop();
+            },
+            child: const Text(
+              'Sim',
+              style: TextStyle(
+                color: Colors.blue,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
               ),
-            ],
+            ),
+          ),
+        ],
       ),
     );
   }

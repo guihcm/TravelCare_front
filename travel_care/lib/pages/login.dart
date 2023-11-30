@@ -49,13 +49,14 @@ class _CadastroPageState extends State<LoginPage> {
               child: Column(children: [
                 TextFormField(
                   controller: controllerUsername,
+                  keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(20)),
                     ),
                     filled: true,
                     fillColor: Color.fromRGBO(230, 230, 230, 100),
-                    hintText: 'Digite seu login',
+                    hintText: 'Digite seu CPF',
                     labelText: "Login",
                   ),
                   inputFormatters: [
@@ -109,7 +110,8 @@ class _CadastroPageState extends State<LoginPage> {
                 ElevatedButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        pessoaController.login(context, controllerUsername, controllerPassword);
+                        pessoaController.login(
+                            context, controllerUsername, controllerPassword);
                       }
                     },
                     child: const Text('Entrar',

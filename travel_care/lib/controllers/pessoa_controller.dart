@@ -111,8 +111,7 @@ class PessoaController {
             return MyDialog(
                 "As senhas não conferem.", () => Navigator.of(context).pop());
           });
-    }
-    else{
+    } else {
       String? username = controllerCPF?.text.trim();
 
       final email = controllerEmail?.text.trim();
@@ -150,7 +149,7 @@ class PessoaController {
       } else {
         _createUserErrorMessage(context, response);
       }
-      }
+    }
   }
 
   Future<void> salvarAcompanhante(
@@ -160,13 +159,16 @@ class PessoaController {
       TextEditingController? controllerRG,
       DateTime? dataNascimento,
       TextEditingController? controllerTelefone) async {
-    final String? password = controllerCPF?.text;
     final String? username = controllerCPF?.text.trim();
 
     final nomeCompleto = controllerNome?.text.trim();
     final cpf = controllerCPF?.text.trim();
     final rg = controllerRG?.text.trim();
     final telefone = controllerTelefone?.text.trim();
+
+    String senha = controllerCPF!.text.replaceAll('.', '');
+    senha = senha.replaceAll('-', '');
+    final String? password = senha;
 
     final response =
         await ParseCloudFunction('salvarAcompanhante').execute(parameters: {
@@ -266,8 +268,8 @@ class PessoaController {
     }
   }
 
-  void recuperarSenha(
-      BuildContext context, TextEditingController controllerEmail, bool edit) async {
+  void recuperarSenha(BuildContext context,
+      TextEditingController controllerEmail, bool edit) async {
     var email = controllerEmail.text.trim();
 
     var emailExiste = await _getByEmail(email);
@@ -284,24 +286,18 @@ class PessoaController {
         showDialog(
             context: context,
             builder: (BuildContext context) {
-              return MyDialog(
-                  "E-mail enviado com sucesso.",
-                  () {
-                    if(edit){
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const LoginPage()));
-                    }
-                    else{
-                      Navigator.pop(context);
-                      Navigator.pop(context);                   
-                      }
-                    }
-                          );
+              return MyDialog("E-mail enviado com sucesso.", () {
+                if (edit) {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const LoginPage()));
+                } else {
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                }
+              });
             });
-
-
       } else {
         showDialog(
             context: context,
@@ -312,15 +308,12 @@ class PessoaController {
       }
     } else {
       showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return MyDialog("Usuário não encontrado.",
-                  () => Navigator.of(context).pop());
-            });
+          context: context,
+          builder: (BuildContext context) {
+            return MyDialog(
+                "Usuário não encontrado.", () => Navigator.of(context).pop());
+          });
     }
-
-
-    
   }
 
   Future<Pessoa?> getPessoa(String? pessoaId) async {
@@ -383,7 +376,7 @@ class PessoaController {
               () => Navigator.of(context).pop());
         });
   }
-  
+
   Future<bool> _getByEmail(String email) async {
     final queryBuilder = QueryBuilder<Pessoa>(Pessoa())
       ..whereEqualTo('email', email);

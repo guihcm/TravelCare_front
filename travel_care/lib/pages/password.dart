@@ -24,7 +24,6 @@ class _PasswordPageState extends State<PasswordPage> {
     controllerEmail.text = widget.email ?? "";
   }
 
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,7 +47,7 @@ class _PasswordPageState extends State<PasswordPage> {
                   ),
                   const SizedBox(height: 15),
                   const Text(
-                    'Recuperação de Senha',
+                    'Redefinição de Senha',
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 28,
@@ -57,7 +56,7 @@ class _PasswordPageState extends State<PasswordPage> {
                   ),
                   const SizedBox(height: 25),
                   const Text(
-                    'Informe seu e-mail para recuperação!',
+                    'Informe seu e-mail para redefinição!',
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 18,
@@ -80,7 +79,8 @@ class _PasswordPageState extends State<PasswordPage> {
                     onPressed: () {
                       bool edit = controllerEmail.text == "" ? true : false;
                       if (_formKey.currentState!.validate()) {
-                        pessoaController.recuperarSenha(context, controllerEmail, edit);
+                        pessoaController.recuperarSenha(
+                            context, controllerEmail, edit);
                       }
                     },
                     child: const Text(
