@@ -69,7 +69,7 @@ class _CadastroPageState extends State<CadastroPage> {
                   ),
                   body: SingleChildScrollView(
                     child: Padding(
-                        padding: const EdgeInsets.all(30.0),
+                        padding: const EdgeInsets.only(left:30.0, right: 30),
                         child: Form(
                             key: _formKey,
                             child: Column(
@@ -247,7 +247,7 @@ class _CadastroPageState extends State<CadastroPage> {
                                     return validateEmptyField(text);
                                   },
                                 ),
-                                const SizedBox(height: 40),
+                                const SizedBox(height: 20),
                                 ElevatedButton(
                                     child: const Text('Salvar',
                                         style: TextStyle(

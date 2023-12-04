@@ -82,11 +82,15 @@ class _RequestInfoDialogState extends State<RequestInfoDialog> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            Text(
-                              solicitacao?.acompanhante?.nomeCompleto ?? "Não",
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontSize: 18,
+                            FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: 
+                              Text(
+                                solicitacao?.acompanhante?.nomeCompleto ?? "Não",
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 18,
+                                ),
                               ),
                             ),
                           ],
