@@ -239,26 +239,29 @@ class _RequestPageState extends State<RequestPage> {
                   ],
                 ),
                 const SizedBox(height: 5),
-                Row(
-                  children: [
-                    Text('Remover acompanhante?',
-                        style: TextStyle(
-                          color: Colors.grey[700],
-                          fontSize: 18,
-                        )),
-                    const SizedBox(width: 3),
-                    GestureDetector(
-                      child: const Text(
-                        'Clique aqui.',
-                        style: TextStyle(
-                          color: Colors.blue,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Row(
+                    children: [
+                      Text('Remover acompanhante?',
+                          style: TextStyle(
+                            color: Colors.grey[700],
+                            fontSize: 18,
+                          )),
+                      const SizedBox(width: 3),
+                      GestureDetector(
+                        child: const Text(
+                          'Clique aqui.',
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
                         ),
+                        onTap: () => removerAcompanhante(),
                       ),
-                      onTap: () => removerAcompanhante(),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -270,26 +273,29 @@ class _RequestPageState extends State<RequestPage> {
         ajax = Flex(
           direction: Axis.vertical,
           children: [
-            Row(
-              children: [
-                Text('Possui um acompanhante? ',
-                    style: TextStyle(
-                      color: Colors.grey[700],
-                      fontSize: 18,
-                    )),
-                const SizedBox(width: 3),
-                GestureDetector(
-                  child: const Text(
-                    'Informe aqui.',
-                    style: TextStyle(
-                      color: Colors.blue,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Row(
+                children: [
+                  Text('Possui um acompanhante? ',
+                      style: TextStyle(
+                        color: Colors.grey[700],
+                        fontSize: 18,
+                      )),
+                  const SizedBox(width: 3),
+                  GestureDetector(
+                    child: const Text(
+                      'Informe aqui.',
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
                     ),
+                    onTap: () => acompanhante(),
                   ),
-                  onTap: () => acompanhante(),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         );

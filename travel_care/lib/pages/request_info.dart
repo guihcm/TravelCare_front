@@ -84,9 +84,9 @@ class _RequestInfoDialogState extends State<RequestInfoDialog> {
                             ),
                             FittedBox(
                               fit: BoxFit.scaleDown,
-                              child: 
-                              Text(
-                                solicitacao?.acompanhante?.nomeCompleto ?? "Não",
+                              child: Text(
+                                solicitacao?.acompanhante?.nomeCompleto ??
+                                    "Não",
                                 style: const TextStyle(
                                   color: Colors.black,
                                   fontSize: 18,
